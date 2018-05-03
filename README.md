@@ -12,34 +12,23 @@ support lua version 5.1 and 5.3.
 
 - **符号定义跳转(goto definition)**
 
-    ![GotoDefinition ](res/GotoDefined.gif)
+    ![GotoDefinition ](https://gitee.com/debugconsole/luahelper/raw/master/res/GotoDefined.gif)
 
 
 - **代码补全(code completion)**
 
-    ![CodeCompletion ](res/CodeCompletion.gif)
+    ![CodeCompletion ](https://gitee.com/debugconsole/luahelper/raw/master/res/CodeCompletion.gif)
 
 
 - **语法错误检测(error checking)**
 
-    ![syntaxErrorChecking ](res/ErrorChech.gif)
+    ![syntaxErrorChecking ](https://gitee.com/debugconsole/luahelper/raw/master/res/ErrorChech.gif)
 
 
 - **Lua代码片段提示(code snippets)**
 
-    ![Snippet ](res/Snippet.gif)
+    ![Snippet ](https://gitee.com/debugconsole/luahelper/raw/master/res/Snippet.gif)
 
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
 
 ## Known Issues
 
