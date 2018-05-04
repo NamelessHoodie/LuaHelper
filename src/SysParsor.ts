@@ -25,9 +25,29 @@ export class SysParsor implements System
         return SysParsor.instance;
     }
 
+    diagnosticCollection:vscode.DiagnosticCollection;
+    diagnostics : vscode.Diagnostic[];
+    workspaceFilInfoList : ComWSFileInfoList;
+    //当前分析文档语法树
+    currentDocAst:DocAstInfo;
+    currentScope;
+    currentScopeAst;
+    scopeAstStack=[];   //以scope为单位的分析结果放进这里，0为DocAstInfo，其他以ScopeAstInfo为主
+    scopeStack = [];
+    currentDoc : DocInfo;
+    lastScopeAst;
+    lastScope;
+    globalScope;
+
+    currentAstNode;
+    lastAstNode;
+    tempFuncItem;
+    private isNewScope = false;
+    moduleChecker:ModuleChecker;
+    
     DoSth( ) : void {
 
-        SysLogger.getSingleton().log('DoSth...');
+        SysLogger.getSingleton().log('Parsor start...');
 
         //遍历工作区所有文件，并把文件路径信息存入uris中
         this.workspaceFilInfoList = ComWSFileInfoList.getInstanse();
@@ -51,26 +71,6 @@ export class SysParsor implements System
     {
         this.diagnosticCollection = _diagnosticCollection;
     }
-
-    diagnosticCollection:vscode.DiagnosticCollection;
-    diagnostics : vscode.Diagnostic[];
-    workspaceFilInfoList : ComWSFileInfoList;
-    //当前分析文档语法树
-    currentDocAst:DocAstInfo;
-    currentScope;
-    currentScopeAst;
-    scopeAstStack=[];   //以scope为单位的分析结果放进这里，0为DocAstInfo，其他以ScopeAstInfo为主
-    scopeStack = [];
-    currentDoc : DocInfo;
-    lastScopeAst;
-    lastScope;
-    globalScope;
-
-    currentAstNode;
-    lastAstNode;
-    tempFuncItem;
-    private isNewScope = false;
-    moduleChecker:ModuleChecker;
 
 
     private _parseLuaFiles( _uris:Array<vscode.Uri> ,isSaveCompletion: boolean = true):void
@@ -148,19 +148,20 @@ export class SysParsor implements System
     }
 
 
-
-    private _reset()
+    /**
+     * 从uri<->DocAst目录中移除
+     * @param _uri 
+     */
+    removeOneDocAst(_uri: vscode.Uri)
     {
-        this.currentDocAst = null;
-        this.currentScope = null;
-        this.currentScopeAst = null;
-        this.scopeStack = [];
-        this.scopeAstStack=[];
-        this.diagnostics = new Array<vscode.Diagnostic>();
-        this.moduleChecker = new ModuleChecker();
+        ComFileAstDirectory.getSingleton().deleteOne(_uri.fsPath);
     }
 
-    //使用luaparse的新的Parse
+    /**
+     * 分析一个新的文档，分析结果DocAst放入uri<->DocAst目录中
+     * @param _uri 
+     * @param doc 
+     */
     parseOne(_uri: vscode.Uri, doc:vscode.TextDocument)
     {
 
@@ -307,14 +308,23 @@ export class SysParsor implements System
 
     }
 
-
+    private _reset()
+    {
+        this.currentDocAst = null;
+        this.currentScope = null;
+        this.currentScopeAst = null;
+        this.scopeStack = [];
+        this.scopeAstStack=[];
+        this.diagnostics = new Array<vscode.Diagnostic>();
+        this.moduleChecker = new ModuleChecker();
+    }
 
     /**
      * luaParse onCreateNode事件调用
      * @param ps 
      * @param node 
      */
-    _onCreateNodeParse( ps:SysParsor , node )
+    private _onCreateNodeParse( ps:SysParsor , node )
     {
         ps.currentAstNode = node;
 
@@ -638,7 +648,7 @@ export class SysParsor implements System
      * @param parsor 
      * @param lastItem 
      */
-    _checkMemberExpressionLocal(node,parsor:SysParsor,lastItem:LuaSyntaxItem = null)
+    private _checkMemberExpressionLocal(node,parsor:SysParsor,lastItem:LuaSyntaxItem = null)
     {
 
         var tempItem = new LuaSyntaxItem(ELuaSyntaxItemType.Variable,node.identifier,null,this.currentDoc);
@@ -709,7 +719,7 @@ export class SysParsor implements System
      * 如果Node类型不是'MemberExpression'则container为null
      * @param identifier    luaparse中identifierNode
      */
-    _getIdentifierName(identifier) {
+    private _getIdentifierName(identifier) {
         if (identifier) {
             switch (identifier.type) {
                 case 'Identifier':
@@ -735,7 +745,7 @@ export class SysParsor implements System
      * @param lastItem 
      * @param type
      */
-    _checkMemberExpressionInModule(parsor:SysParsor,
+    private _checkMemberExpressionInModule(parsor:SysParsor,
                             node,
                             lastItem:LuaSyntaxItem = null,
                             type:ELuaSyntaxItemType = null)

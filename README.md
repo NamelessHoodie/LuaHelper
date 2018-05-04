@@ -36,6 +36,10 @@ don't support chinese language to name file ;
 
 ## Release Notes
 
+### 0.0.6
+
+* Fixed issue : the features haven't applied in the files newly-created; 
+
 ### 0.0.5
 
 * Added features symbols completion;

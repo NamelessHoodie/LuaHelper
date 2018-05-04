@@ -63,6 +63,27 @@ export function activate(context: vscode.ExtensionContext) {
         });
 
 
+        //文件系统监听器,监听文件新建,删除事件
+        let fswatcher = vscode.workspace.createFileSystemWatcher("**/*.lua");
+        fswatcher.onDidCreate(eWithUri=>
+        {
+            console.log("OnFileCreate:" + eWithUri.fsPath );
+            vscode.workspace.openTextDocument(eWithUri).then( 
+                doc => {    
+                    parsor.parseOne(eWithUri,doc);
+                }   
+            )
+
+        });
+
+        fswatcher.onDidDelete(eWithUri=>
+        {
+            console.log("OnFileDelete:" + eWithUri.fsPath );
+            parsor.removeOneDocAst(eWithUri);
+        });
+
+
+        context.subscriptions.push(fswatcher);
         context.subscriptions.push(SysLogger.getSingleton());
         context.subscriptions.push(diagnosticCollection);     
         context.subscriptions.push(dpProvider);
@@ -73,14 +94,6 @@ export function activate(context: vscode.ExtensionContext) {
     {
         SysLogger.getSingleton().log('Extension Excp:' + excp);
     }
-
-    // // let onDidChangeActiveText = vscode.window.onDidChangeActiveTextEditor(event => {
-    // //     if(event == undefined)
-    // //     {
-    // //         return;
-    // //     }
-
-    // // })
     
 
 }

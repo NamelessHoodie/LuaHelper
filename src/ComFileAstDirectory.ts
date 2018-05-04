@@ -25,6 +25,15 @@ export class ComFileAstDirectory
     }
 
     /**
+     * 移除一个
+     * @param _strUriPath 
+     */
+    deleteOne(_strUriPath:string)
+    {
+        this.fileAstDirectory.delete(_strUriPath);
+    }
+
+    /**
      * 由uir获取DocAstInfo
      * @param _strUri 
      */
