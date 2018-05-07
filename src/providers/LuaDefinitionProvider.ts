@@ -79,6 +79,7 @@ export class GoDefinitionProvider implements vscode.DefinitionProvider
         this._selectPos = position;
         //获取KeyWord
         let keyword :string = document.getText(this._selectRange);
+        let keywordPos = this._selectRange.start;
         //指向关键字自身位置
         let defaultLocation = new vscode.Location(document.uri,position);
         
@@ -150,58 +151,66 @@ export class GoDefinitionProvider implements vscode.DefinitionProvider
         //     }       
         // }
 
-
         //分级取出关键字： 如 xx.xx.keyword 则分别取出祖宗，儿子，孙子...
-        var keywords:string[]=[];
-        var syntaxkeyWordMatch = "(([a-zA-Z_][a-zA-Z0-9_]*)\\.)*" + keyword;
-        matchRet = lineText.match(syntaxkeyWordMatch);
-        if ( matchRet != null ) {
+        try{
+           
+            let keywordStatement = Utils.findStatementByKeyword(lineText,this._selectRange);
+            var keywords:string[]=[];
+            if ( keywordStatement != null ) {
 
-            var tempNames: Array<string> = matchRet[0].split('.')
-            tempNames.forEach(e => {
-                if ( e != "" ) {
-                    keywords.push(e);
-                }   
-            });
-        }
+                var tempNames: Array<string> = keywordStatement.split('.')
+                for (let index = 0; index < tempNames.length; index++) {
+                    const element = tempNames[index];
+                    if ( element != "" ) {
+                        keywords.push(element);
+                    }
+                    if( element == keyword )
+                    {
+                        break;
+                    }
+                    
+                }
+            }
 
-        if(keywords.length == 0)
+            if(keywords.length == 0)
+            {
+                console.log("Can't find keywords ： " + lineText );
+                return;
+            }
+
+        }catch(excp)
         {
-            console.log("Can't find keywords ： " + lineText );
-            return;
+            console.log("Get keyword statement error :" + excp );
         }
+
 
         this._targetDoc = document;
         var item;
 
         //先查找keywords[0] 把祖宗找到
         //---------------------------------------------
-        //查找DocAstInfo scopeStack 以确定scope按scope查找局部local定义
+        //在AstDoc的scopeStack中查找對應的socpe
+        //找到目標socpe后再逐級查找Item
         try{
+            let checkLine = keywordPos.line -1;
+            var scopeList = [];
             if (docAstInfo.scopeAstStack) {
                 for (let i = 0; i < docAstInfo.scopeAstStack.length; i++) {
                     const scopeAstInfo = docAstInfo.scopeAstStack[i];
 
-                    for (let j = 0; j < scopeAstInfo.scope.nodes.length; j++) {
-                        const node = scopeAstInfo.scope.nodes[j];
-                        if(node.type == 'Identifier')
-                        {
-                            if (node.name == keywords[0] ) {
-                                //Bingo
-                                //找局部
-                                item = Utils.findDefinedItemInScopeAstInfo(keywords[0],scopeAstInfo);
-                                item = item.item;
-                                break;
-                            }
-                        }
+                    if (scopeAstInfo.startline<= checkLine && checkLine <= scopeAstInfo.endline) {
+                        scopeList.push(scopeAstInfo);
                     }
-
-                    if(item)
-                    {
-                        break;
-                    }
-
                 }
+                
+                if ( scopeList.length > 0 ) {
+                    var targetScope = scopeList[scopeList.length-1];
+                    //找局部
+                    var ret = Utils.findDefinedItemInScopeAstInfo(keywords[0],targetScope);
+                    item = ret.item;
+                }
+
+
             }
         }catch(excp)
         {
@@ -223,14 +232,14 @@ export class GoDefinitionProvider implements vscode.DefinitionProvider
 
 
         //需要查找子孙的情况
-        var subitem = null;
+        var subitem = item;
         //找到祖宗后找孙子
         if(item)
         {
             //找子孙
             for (let index = 1; index < keywords.length; index++) {
                 const subkeyword = keywords[index];
-                subitem = item.children.get(subkeyword);
+                subitem = subitem.children.get(subkeyword);
                 if(subitem)
                 {
                     //找到继续找下一个孙子
@@ -291,29 +300,5 @@ export class GoDefinitionProvider implements vscode.DefinitionProvider
         }
     }
 
-
-    // _findDefinedItemInScopeAstInfo( _keyword , _scopeAstInfo)
-    // {
-    //     if(_scopeAstInfo == null)
-    //     {
-    //         return;
-    //     }
-
-    //     //找局部
-    //     var item = _scopeAstInfo.localItems.get(_keyword);
-    //     if(!item)
-    //     {
-    //         //参数
-    //         item = _scopeAstInfo.paramsItems.get(_keyword);
-    //     }
-
-
-    //     if(!item)
-    //     {
-    //         return this._findDefinedItemInScopeAstInfo(_keyword,_scopeAstInfo.parent);
-    //     }
-
-    //     return item;
-    // }
 
 }

@@ -31,13 +31,14 @@ export class SysParsor implements System
     //当前分析文档语法树
     currentDocAst:DocAstInfo;
     currentScope;
-    currentScopeAst;
+    currentScopeAst:ScopeAstInfo;
     scopeAstStack=[];   //以scope为单位的分析结果放进这里，0为DocAstInfo，其他以ScopeAstInfo为主
     scopeStack = [];
     currentDoc : DocInfo;
     lastScopeAst;
     lastScope;
     globalScope;
+    currentParseLine=0;
 
     currentAstNode;
     lastAstNode;
@@ -189,10 +190,12 @@ export class SysParsor implements System
                 ranges: true,
                 scope:true,
                 onCreateNode:(node)=>{
+
+                    this.currentParseLine = node.loc.start.line-1;
+
                     if(this.isNewScope)
                     {
 
-                        this.currentScopeAst.startline = node.loc.start.line-1;
                         //取出头部分析是否是函数 是函數設置當前ScopeAst 參數Item
                         var line = node.loc.start.line-1;
 
@@ -200,9 +203,9 @@ export class SysParsor implements System
                         var posStart = null;
                         var lineTex = this.currentDoc.doc.lineAt(node.loc.start.line-1);
 
-                        var sss = lineTex.text.match("function\\s*[a-zA-Z_.]*\\(");//"function(\\s+[a-zA-Z_]\\w*(.[a-zA-Z_]\\w*)*\\s*)?\\s*\\("
+                        var matchRet = lineTex.text.match("function\\s*[a-zA-Z_.]*\\(");//"function(\\s+[a-zA-Z_]\\w*(.[a-zA-Z_]\\w*)*\\s*)?\\s*\\("
 
-                        if (sss!=null) {
+                        if ( matchRet !=null) {
                             var startCharactor = lineTex.text.search("\\(");
 
                             posStart = new vscode.Position(node.loc.start.line-1,startCharactor);
@@ -275,6 +278,7 @@ export class SysParsor implements System
                     newScopeAst.scopeIndex = this.scopeAstStack.length;
                     newScopeAst.scope = newScope;
                     newScopeAst.docAst = this.currentDocAst;        
+                    newScopeAst.startline = this.currentParseLine;
                     this.scopeAstStack.push(newScopeAst);
                     this.currentScopeAst = newScopeAst;
 
@@ -283,6 +287,7 @@ export class SysParsor implements System
                     this.isNewScope = false;
                     this.lastScope = this.scopeStack.pop();
                     this.lastScopeAst = this.currentScopeAst;
+                    this.lastScopeAst.endline = this.currentParseLine;
                     this.currentScopeAst = this.currentScopeAst.parent;
                     
                 }
@@ -430,6 +435,7 @@ export class SysParsor implements System
                     
                 }else if( variable.type == 'MemberExpression')
                 {
+
                     //递归判断多层嵌套定义
                     ps._checkMemberExpressionInModule(ps,variable)
                 }
@@ -737,7 +743,6 @@ export class SysParsor implements System
     }
 
 
-
     /**
      * 检测成员表达式 Module版本 中每一项是否已定义，已定义则挂接
      * @param parsor 
@@ -773,28 +778,69 @@ export class SysParsor implements System
             {
                 if (ret.isParamItem == false ) 
                 {
-                    rootItem.children.set(node.identifier.name,tempItem);
+                    if(!rootItem.children.has(node.identifier.name))
+                    {
+                        rootItem.children.set(node.identifier.name,tempItem);
+                    }else
+                    {
+                        //如果存在则直接挂接子项
+                        var item = rootItem.children.get(node.identifier.name);
+                        if (lastItem!=null) {
+                            item.children.set(lastItem.astNode.name,lastItem);
+                        }
+                        
+                    }
                 }
-            }//没有取到同时该文件是Module则去Module中取
-            else if(parsor.moduleChecker.isModuleFile === true && parsor.moduleChecker.moduleItem.children.has(node.base.name))
+
+                return;
+            }
+            
+            
+            //没有取到同时该文件是Module则去Module中取
+            if(parsor.moduleChecker.isModuleFile === true && parsor.moduleChecker.moduleItem.children.has(node.base.name))
             {
                 rootItem = parsor.moduleChecker.moduleItem.children.get(node.base.name);
+                if(rootItem)
+                {
+                    //如果没有的话则挂接
+                    if (!rootItem.children.has(node.identifier.name)) 
+                    {
+                        rootItem.children.set(node.identifier.name,tempItem);
+                    }else
+                    {
+                        //如果存在则直接挂接子项
+                        var item = rootItem.children.get(node.identifier.name);
+                        if (lastItem!=null) {
+                            item.children.set(lastItem.astNode.name,lastItem);
+                        }
+                        
+                    }
+
+                    return;
+                }
             }
             
             //都没取到并且SeeAll则去全局表中取
-            if (!rootItem) 
+            if(GlobalAstInfo.globalItems.has(node.base.name) )
             {
-                if(GlobalAstInfo.globalItems.has(node.base.name) )
+                rootItem = GlobalAstInfo.globalItems.get(node.base.name);
+                //如果没有的话则挂接
+                if (!rootItem.children.has(node.identifier.name)) 
                 {
-                    rootItem = GlobalAstInfo.globalItems.get(node.base.name);
                     rootItem.children.set(node.identifier.name,tempItem);
+                }else
+                {
+                    //如果存在则直接挂接子项
+                    var item = rootItem.children.get(node.identifier.name);
+                    if (lastItem!=null) {
+                        item.children.set(lastItem.astNode.name,lastItem);
+                    }
+                    
                 }
-            }
-            
-            if (rootItem) 
-            {
+
                 return;
             }
+            
    
             //没定义则说明是全局或者是Module下
             if (parsor.moduleChecker.isModuleFile === true) 

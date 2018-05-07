@@ -39,6 +39,7 @@ don't support chinese language to name file ;
 ### 0.0.6
 
 * Fixed issue : the features haven't applied in the files newly-created; 
+* Fixed issue : fixed some bugs in gotoDefinition;
 
 ### 0.0.5
 

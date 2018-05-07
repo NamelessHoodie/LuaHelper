@@ -52,7 +52,9 @@ export class LuaSyntaxItem
 export class ScopeAstInfo
 {
     scopeIndex : number;
-    startline :number;
+    //scope起始行数从0计数
+    startline :number = -1;
+    endline :number = -1;
     scope : Scope ;
     parent : ScopeAstInfo;
     docAst : DocAstInfo;

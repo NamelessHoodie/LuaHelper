@@ -267,6 +267,47 @@ export class Utils
         return ret;
     }
 
+    /**
+     * 指定一个选择范围将一个词从所在语句中提取出来 如 print("aaa.bbb.ccc"); 范围是'ccc'(意思上)的话则提取出aaa.bbb.ccc 
+     * @param   _inputLineText 被提取语句 
+     *          _wordRenge 目标词的范围
+     * @return 提取结果
+     */
+    static findStatementByKeyword( _inputLineText:string , _wordRenge:vscode.Range) : string
+    {
+        let posStart = _wordRenge.start.character;
+        let posEnd =  _wordRenge.end.character;
+        let matchEet;
+        for (let index = _wordRenge.start.character; index >= 0 ; index--) {
+
+            matchEet = _inputLineText[index].match("[^\\.0-9a-zA-Z_]");
+            if(matchEet)
+            {
+                posStart = index + 1;
+                break;
+            }     
+           
+        }
+
+
+        for (let index = _wordRenge.end.character; index < _inputLineText.length ; index++) {
+
+            matchEet = _inputLineText[index].match("[^\\.0-9a-zA-Z_]");
+            if(matchEet)
+            {
+                posEnd = index;
+                break;
+            }     
+        }
+
+        if( posStart < posEnd  && posEnd <= _inputLineText.length )
+        {
+            return _inputLineText.substring(posStart,posEnd);
+        }
+
+        return null;
+    }
+
 
 
 }
