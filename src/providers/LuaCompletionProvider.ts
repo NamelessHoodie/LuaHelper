@@ -265,7 +265,6 @@ export class LuaCompletionItemProvider implements vscode.CompletionItemProvider
                         if(node.type == 'Identifier')
                         {
                             if (node.name == keywordRoot ) {
-                                //Bingo
                                 //找局部
                                 item = Utils.findDefinedItemInScopeAstInfo( keywordRoot , scopeAstInfo );
                                 item = item.item;
