@@ -48,6 +48,8 @@ export class LuaSyntaxItem
 }
 
 
+
+
 //一个Scope块的语法树
 export class ScopeAstInfo
 {

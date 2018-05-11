@@ -9,7 +9,8 @@
 		"email": "120933965@qq.com"
 	},
     "engines": {
-        "vscode": "^1.10.0"
+        "vscode": "^1.10.0",
+        "node": "^6.3.0"
     },
     "categories": [
         "Other"
@@ -40,7 +41,138 @@
                     "description": "工作区根目录，可设定多个"
                 }
             }
-        }  
+        },
+        "debuggers": [
+            {
+                "type": "lua",
+                "label": "LuaDebugger",
+                "program": "./out/debugger/debugAdapter.js",
+                "runtime": "node",
+                "configurationAttributes": {
+                    "launch":{
+                        "required":[
+                            "runtimeType",
+                            "localRoot",
+                            "post",
+                            "printType",
+                            "exePath"
+                        ],
+                        "properties":{
+                            "runtimeType":{
+                                "type": "string",
+                                "default": "standalone",
+                                "description": "运行时类型",
+								"enum": [
+									"standalone",
+                                    "cocos",
+                                    "unity"
+								]
+                            },
+                            "host":{
+                                "type":"string",
+                                "description": "调试器的地址(仅Lua51 内置有效)",
+								"default": "localhost"
+                            },
+                            "port": {
+								"type": "number",
+								"description": "调试器的端口",
+								"default": 7003
+                            },
+                            "mainFile": {
+								"type": "string",
+								"description": "--选填 启动的lua 文件名 运行程序支持 workdir 当做 file 进行传入",
+								"default": "${file}"
+							},
+							"localRoot": {
+								"type": "string",
+								"description": "--必填 当前文件目录 如果 运行程序支持 workdir 该参数当做 workdir进行传入",
+								"default": "${workspaceRoot}"
+							},
+							"scripts": {
+								"type": "array",
+								"default": [],
+								"description": "--必填 源文件目录(package.path 中的路径对应的本地路径)",
+								"items": {
+									"type": "string"
+								}
+							},
+							"exePath": {
+								"type": "string",
+								"description": "--必填 执行文件路径",
+								"default": ""
+							},
+							"printType": {
+								"type": "number",
+								"default": 1,
+								"description": "--必填 print打印方式 1 控制台和系统输出,2 控制台输出,3 系统输出",
+								"enum": [
+									1,
+									2,
+									3
+								]
+							},
+							"localRootDesc": {
+								"type": "string"
+							},
+							"mainFileDesc": {
+								"type": "string"
+							},
+							"portDesc": {
+								"type": "string"
+							},
+							"scriptsDesc": {
+								"type": "string"
+							},
+							"exePathDesc1": {
+								"type": "string"
+							},
+							"exePathDesc2": {
+								"type": "string"
+							},
+							"exePathDesc3": {
+								"type": "string"
+							},
+							"printTypeDesc": {
+								"type": "string"
+							}
+                        }
+
+                    }
+                },
+                "initialConfigurations": [
+					{
+						"name": "launch-alone",
+						"type": "lua",
+						"request": "launch",
+						"runtimeType": "standalone-launch",
+						"localRootDesc": "--必填 当前文件夹目录 如果 运行程序支持 workdir 该参数当做 workdir进行传入",
+						"localRoot": "${workspaceRoot}",
+						"mainFileDesc": "-- 先填 启动的lua 文件名 运行程序支持 workdir 当做 file 进行传入 不支持可不填",
+						"mainFile": "src/main.lua",
+						"portDesc": "--必填 调试器的端口 可修改 与调用LuaDebug 的端口对应",
+						"port": 58883,
+						"exePathDesc1": "--必填 执行文件路径",
+						"exePathDesc2": "--必填 win-> ",
+						"exePathDesc3": "--必填 mac ->/Users/k0204/Desktop/quickv3/quickv3 Mac.app/Contents/MacOS/quickv3 Mac",
+						"exePath": "/Users/k0204/Desktop/quickv3/quickv3 Mac.app/Contents/MacOS/quickv3 Mac",
+						"printTypeDesc": "--必填 print打印方式 1 控制台和系统输出,2 控制台输出,3 系统输出",
+						"printType": 1
+                    },
+                    {
+						"name": "unity-attach",
+						"type": "lua",
+						"request": "attach",
+						"runtimeType": "unity-attach",
+						"localRootDesc": "--必填 当前文件夹目录 如果 运行程序支持 workdir 该参数当做 workdir进行传入",
+						"localRoot": "${workspaceRoot}",
+						"portDesc": "--必填 调试器的端口 可修改 与调用LuaDebug 的端口对应",
+						"port": 58883,
+						"printTypeDesc": "--必填 print打印方式 1 控制台和系统输出,2 控制台输出,3 系统输出",
+						"printType": 1
+					}
+                ]  
+            }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
@@ -51,7 +183,9 @@
         
     },
     "dependencies": {
-        "luaparse": "^0.2.1"
+        "luaparse": "^0.2.1",
+        "vscode-debugadapter": "1.27.0",
+		"vscode-debugprotocol": "1.27.0"
     },
     "devDependencies": {
         "typescript": "^2.6.1",
