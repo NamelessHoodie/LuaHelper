@@ -46,7 +46,7 @@
             {
                 "type": "lua",
                 "label": "LuaDebugger",
-                "program": "./out/debugger/debugAdapter.js",
+                "program": "./out/debugger/DebugAdapter.js",
                 "runtime": "node",
                 "configurationAttributes": {
                     "launch":{
@@ -110,30 +110,6 @@
 									2,
 									3
 								]
-							},
-							"localRootDesc": {
-								"type": "string"
-							},
-							"mainFileDesc": {
-								"type": "string"
-							},
-							"portDesc": {
-								"type": "string"
-							},
-							"scriptsDesc": {
-								"type": "string"
-							},
-							"exePathDesc1": {
-								"type": "string"
-							},
-							"exePathDesc2": {
-								"type": "string"
-							},
-							"exePathDesc3": {
-								"type": "string"
-							},
-							"printTypeDesc": {
-								"type": "string"
 							}
                         }
 
@@ -141,34 +117,11 @@
                 },
                 "initialConfigurations": [
 					{
-						"name": "launch-alone",
-						"type": "lua",
+                        "name": "launch-alone",
+                        "type": "lua",
+						"runtimeType": "standalone",
 						"request": "launch",
-						"runtimeType": "standalone-launch",
-						"localRootDesc": "--必填 当前文件夹目录 如果 运行程序支持 workdir 该参数当做 workdir进行传入",
-						"localRoot": "${workspaceRoot}",
-						"mainFileDesc": "-- 先填 启动的lua 文件名 运行程序支持 workdir 当做 file 进行传入 不支持可不填",
-						"mainFile": "src/main.lua",
-						"portDesc": "--必填 调试器的端口 可修改 与调用LuaDebug 的端口对应",
-						"port": 58883,
-						"exePathDesc1": "--必填 执行文件路径",
-						"exePathDesc2": "--必填 win-> ",
-						"exePathDesc3": "--必填 mac ->/Users/k0204/Desktop/quickv3/quickv3 Mac.app/Contents/MacOS/quickv3 Mac",
-						"exePath": "/Users/k0204/Desktop/quickv3/quickv3 Mac.app/Contents/MacOS/quickv3 Mac",
-						"printTypeDesc": "--必填 print打印方式 1 控制台和系统输出,2 控制台输出,3 系统输出",
-						"printType": 1
-                    },
-                    {
-						"name": "unity-attach",
-						"type": "lua",
-						"request": "attach",
-						"runtimeType": "unity-attach",
-						"localRootDesc": "--必填 当前文件夹目录 如果 运行程序支持 workdir 该参数当做 workdir进行传入",
-						"localRoot": "${workspaceRoot}",
-						"portDesc": "--必填 调试器的端口 可修改 与调用LuaDebug 的端口对应",
-						"port": 58883,
-						"printTypeDesc": "--必填 print打印方式 1 控制台和系统输出,2 控制台输出,3 系统输出",
-						"printType": 1
+						"stopOnEntry": true
 					}
                 ]  
             }

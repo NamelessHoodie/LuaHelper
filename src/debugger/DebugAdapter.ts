@@ -4,8 +4,11 @@ import { DebugProtocol } from 'vscode-debugprotocol';
 import { DebugSession, LoggingDebugSession , InitializedEvent,TerminatedEvent,
          StoppedEvent, BreakpointEvent, OutputEvent} from 'vscode-debugadapter';
 
-class LuaDebugSession extends LoggingDebugSession
+export class LuaDebugAdapter extends LoggingDebugSession
 {
+    
+    public isHitBreak: boolean = false
+
     constructor()
     {
         super("debugLog.txt");
@@ -19,17 +22,26 @@ class LuaDebugSession extends LoggingDebugSession
     protected initializeRequest(response: DebugProtocol.InitializeResponse, 
                             args: DebugProtocol.InitializeRequestArguments): void 
     {
-        // build and return the capabilities of this debug adapter:
-		response.body = response.body || {};
+        try
+        {
+            // build and return the capabilities of this debug adapter:
+            response.body = response.body || {};
 
-		// the adapter implements the configurationDoneRequest.
-		response.body.supportsConfigurationDoneRequest = true;
-		// make VS Code to use 'evaluate' when hovering over source
-		response.body.supportsEvaluateForHovers = true;
+            // the adapter implements the configurationDoneRequest.
+            response.body.supportsConfigurationDoneRequest = true;
+            // make VS Code to use 'evaluate' when hovering over source
+            response.body.supportsEvaluateForHovers = true;
 
-        this.sendResponse(response);
-        
-        this.sendEvent(new InitializedEvent());
+            this.sendResponse(response);
+            
+            this.sendEvent(new InitializedEvent()); 
+        }catch(excp)
+        {
+            console.log("Exception: initializeRequest："+ excp );
+        }
+
+
+        console.log("initializeRequest!!");
     }
 
 
@@ -46,7 +58,8 @@ class LuaDebugSession extends LoggingDebugSession
     protected async launchRequest(response: DebugProtocol.LaunchResponse, args: any) 
     {
 
-		this.sendResponse(response);
+        this.sendResponse(response);
+        console.log("launchRequest!!");
 	}
     
 
@@ -103,3 +116,7 @@ class LuaDebugSession extends LoggingDebugSession
     }
 
 } 
+
+
+
+DebugSession.run(LuaDebugAdapter);

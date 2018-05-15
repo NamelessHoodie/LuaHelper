@@ -1,7 +1,8 @@
 // A launch configuration that compiles the extension and then opens it inside a new window
 // Use IntelliSense to learn about possible attributes.
 // Hover to view descriptions of existing attributes.
-// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387 ,
+//            "preLaunchTask": "npm: watch"
 {
 	"version": "0.2.0",
     "configurations": [
@@ -15,8 +16,7 @@
             ],
             "outFiles": [
                 "${workspaceFolder}/out/**/*.js"
-            ],
-            "preLaunchTask": "npm: watch"
+            ]
         },
         {
             "name": "Extension Tests",
@@ -33,13 +33,19 @@
             "preLaunchTask": "npm: watch"
         },
         {
-			"type": "node",
+            "type": "node",
 			"request": "launch",
 			"name": "Server",
 			"cwd": "${workspaceFolder}",
-			"program": "${workspaceFolder}/src/debugger/debugAdapter.ts",
+			"program": "${workspaceFolder}/src/debugger/DebugAdapter.ts",
 			"args": [ "--server=4711" ],
 			"outFiles": [ "${workspaceFolder}/out/**/*.js" ]
 		}
+    ],
+    "compounds": [
+		{
+			"name": "Extension + Server",
+			"configurations": [ "Extension", "Server" ]
+        }
     ]
 }
