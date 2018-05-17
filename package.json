@@ -42,6 +42,11 @@
                 }
             }
         },
+        "breakpoints": [
+			{
+				"language": "lua"
+			}
+		],
         "debuggers": [
             {
                 "type": "lua",
@@ -119,6 +124,7 @@
 					{
                         "name": "launch-alone",
                         "type": "lua",
+                        "port": 7003,
 						"runtimeType": "standalone",
 						"request": "launch",
 						"stopOnEntry": true
@@ -138,7 +144,8 @@
     "dependencies": {
         "luaparse": "^0.2.1",
         "vscode-debugadapter": "1.27.0",
-		"vscode-debugprotocol": "1.27.0"
+        "vscode-debugprotocol": "1.27.0",
+        "vscode": "^1.1.6"
     },
     "devDependencies": {
         "typescript": "^2.6.1",

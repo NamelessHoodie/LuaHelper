@@ -599,7 +599,7 @@ function print1(...)
 	end
 	if(LuaDebugger.isProntToConsole == 1 or LuaDebugger.isProntToConsole == 2) then
 		if(debug_server) then
-			local arg = {...}    --这里的...和{}符号中间需要有空格号，否则会出错  
+			local arg = { ... }    --这里的...和{}符号中间需要有空格号，否则会出错  
 			local str = ""
 			for k, v in pairs(arg) do
 				str = str .. tostring(v) .. "\t"
