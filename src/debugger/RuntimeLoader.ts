@@ -32,15 +32,15 @@ export class RuntimeLoader
                 var fileInfos = fileName.split("out")
                 var debugPath =  path.join(fileInfos[0],"luadebug")
                 debugPath = debugPath.replace(/\\/g, "/");
-                var luaScript = "package.path = package.path .. ';" + debugPath + "/?.lua;'\n"
+                var luaScript = "package.path = package.path .. ';" + debugPath + "/?.lua;"+debugPath + "/luabin;'\n"
                 for (let index = 0; index < localRoots.length; index++) {
                     const element = localRoots[index];
                     luaScript += element + "/?.lua;'" 
                 }
 
+                luaScript += debugPath + "/luabin;\n"
                 luaScript += "require('LuaDebug')('localhost',"+ args.port +")\n"
                 luaScript += "require('"+ args.mainFile +"')\n"
-                luaScript += "print1('11111111111111')\n"
                 
                 options = {
                     encoding: 'utf8',
