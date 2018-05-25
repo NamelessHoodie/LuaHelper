@@ -219,7 +219,7 @@ export class LuaCompletionItemProvider implements vscode.CompletionItemProvider
         }
 
         //先将所有':'统一替换成.
-        _word.replace(/:/g,'.');
+        _word = _word.replace(/:/g,'.');
 
         //分级取出关键字： 如 xx.xx.keyword 则分别取出祖宗，儿子，孙子...
         let tempNames: Array<string> = _word.split('.')

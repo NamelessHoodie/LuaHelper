@@ -36,6 +36,10 @@ don't support chinese language to name file ;
 
 ## Release Notes
 
+### 0.0.7
+
+* Fixed issue : now support parsing expression like 'self./:' 
+
 ### 0.0.6
 
 * Fixed issue : the features haven't applied in the files newly-created; 
@@ -46,7 +50,6 @@ don't support chinese language to name file ;
 * Added features symbols completion;
 * Fixed issue that catching excption in parsing empty file;
 * Added features for support statement `module`;
-
 
 ### 0.0.4
 

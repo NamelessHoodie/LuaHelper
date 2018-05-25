@@ -236,7 +236,7 @@ export class Utils
             return;
         }
 
-        
+
 
         //找局部
         var item = _scopeAstInfo.localItems.get(_indentifier);
@@ -320,7 +320,7 @@ export class Utils
     }
 
     /**
-     * 指定一个选择范围将一个词从所在语句中提取出来 如 print("aaa.bbb.ccc"); 范围是'ccc'(意思上)的话则提取出aaa.bbb.ccc 
+     * 指定一个选择范围将一个词从所在语句中提取出来 如 print("aaa.bbb:ccc"); 范围是'ccc'(意思上)的话则提取出aaa.bbb:ccc 
      * @param   _inputLineText 被提取语句 
      *          _wordRenge 目标词的范围
      * @return 提取结果
@@ -332,7 +332,7 @@ export class Utils
         let matchEet;
         for (let index = _wordRenge.start.character; index >= 0 ; index--) {
 
-            matchEet = _inputLineText[index].match("[^\\.0-9a-zA-Z_]");
+            matchEet = _inputLineText[index].match("[^\\.:0-9a-zA-Z_]");
             if(matchEet)
             {
                 posStart = index + 1;

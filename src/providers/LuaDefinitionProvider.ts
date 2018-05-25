@@ -158,6 +158,8 @@ export class GoDefinitionProvider implements vscode.DefinitionProvider
             var keywords:string[]=[];
             if ( keywordStatement != null ) {
 
+                //先将所有':'统一替换成.
+                keywordStatement = keywordStatement.replace(/:/g,'.');
                 var tempNames: Array<string> = keywordStatement.split('.')
                 for (let index = 0; index < tempNames.length; index++) {
                     const element = tempNames[index];
