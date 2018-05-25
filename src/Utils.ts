@@ -236,6 +236,8 @@ export class Utils
             return;
         }
 
+        
+
         //找局部
         var item = _scopeAstInfo.localItems.get(_indentifier);
         //找参数
@@ -265,6 +267,56 @@ export class Utils
         ret.item = item;
 
         return ret;
+    }
+
+
+    /**
+     * 指定一个scopeAst获取其self所代表的类名(这一级scope取不到则去上一级取)
+     * @param _scopeAstInfo 
+     */
+    static getCurrentScopeAstSelfObjName( _scopeAstInfo:ScopeAstInfo ): string|null
+    {
+        let ret:string = null;
+        if( _scopeAstInfo.selfObjName )
+        {
+            ret = _scopeAstInfo.selfObjName;
+        }else
+        {
+            if( _scopeAstInfo.parent )
+            {
+                ret = Utils.getCurrentScopeAstSelfObjName( _scopeAstInfo.parent );
+            }
+        }
+
+        return ret;
+
+    }
+
+    /**
+     * 查找指定doc,pos的ScopeAst
+     * @param pos 
+     */
+    static findPositionScopeAst( docAst, pos ) :ScopeAstInfo|null
+    {
+        let retScopeAst = null;
+        let checkLine = pos.line -1;
+        var scopeList = [];
+        if (docAst.scopeAstStack) {
+
+            for (let i = 0; i < docAst.scopeAstStack.length; i++) {
+                const scopeAstInfo = docAst.scopeAstStack[i];
+
+                if (scopeAstInfo.startline<= checkLine && checkLine <= scopeAstInfo.endline) {
+                    scopeList.push(scopeAstInfo);
+                }
+            }
+
+            if ( scopeList.length > 0 ) 
+            {
+                retScopeAst = scopeList[scopeList.length-1];
+            }
+        }
+        return retScopeAst;
     }
 
     /**

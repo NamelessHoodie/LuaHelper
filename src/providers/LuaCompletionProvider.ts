@@ -35,21 +35,6 @@ export class LuaCompletionItemProvider implements vscode.CompletionItemProvider
                                     position: vscode.Position,
                                     token: vscode.CancellationToken)//: Thenable<vscode.CompletionItem[]>
     {
-        //sample
-        // let comp = new vscode.CompletionItem("aaa");
-        // comp.detail = "第一個";
-        // comp.kind = vscode.CompletionItemKind.Function;
-        // comp.documentation = "這是一個方法";
-
-        // this.completionItems.push(comp);
-        // comp = new vscode.CompletionItem("aaa2");
-        // comp.detail = "第二個";
-        // this.completionItems.push(comp);
-        // this.completionItems.push(new vscode.CompletionItem("aaa3"));
-        
-        // return new Promise<vscode.CompletionItem[]>((resolve, reject) => {
-        //     return this.completionItems;
-        // });
 
         //入口
         //  2種情形
@@ -87,14 +72,14 @@ export class LuaCompletionItemProvider implements vscode.CompletionItemProvider
                 //獲取整個輸入單詞
                 let word = inputLineText.substr(startPos,position.character-startPos);
     
-                console.log("word:" + word);
+                //console.log("word:" + word);
                 if(!word)
                 {
                     return;
                 }
     
                 //查找.的前一個符號對應的符號Item
-                let parentItem = this._searchSymbolItem(docAstInfo,word);
+                let parentItem = this._searchSymbolItem(docAstInfo,word,position);
                 let tempItem;
                 //獲取其Chilren信息
                 if ( parentItem ) {
@@ -226,12 +211,15 @@ export class LuaCompletionItemProvider implements vscode.CompletionItemProvider
         return comp;
     }
 
-    _searchSymbolItem(_docAstInfo, _word ):LuaSyntaxItem|null
+    _searchSymbolItem(_docAstInfo, _word , _position):LuaSyntaxItem|null
     {
         if( !_docAstInfo )
         {
             return;
         }
+
+        //先将所有':'统一替换成.
+        _word.replace(/:/g,'.');
 
         //分级取出关键字： 如 xx.xx.keyword 则分别取出祖宗，儿子，孙子...
         let tempNames: Array<string> = _word.split('.')
@@ -255,31 +243,54 @@ export class LuaCompletionItemProvider implements vscode.CompletionItemProvider
         //查找DocAstInfo scopeStack 以确定scope按scope查找局部local定义
         try{
 
-            if (_docAstInfo.scopeAstStack) {
+            let targetScope = Utils.findPositionScopeAst( _docAstInfo , _position );
 
-                for (let i = 0; i < _docAstInfo.scopeAstStack.length; i++) {
-                    const scopeAstInfo = _docAstInfo.scopeAstStack[i];
-
-                    for (let j = 0; j < scopeAstInfo.scope.nodes.length; j++) {
-                        const node = scopeAstInfo.scope.nodes[j];
-                        if(node.type == 'Identifier')
-                        {
-                            if (node.name == keywordRoot ) {
-                                //找局部
-                                item = Utils.findDefinedItemInScopeAstInfo( keywordRoot , scopeAstInfo );
-                                item = item.item;
-                                break;
-                            }
-                        }
-                    }
-
-                    if(item)
+            if (targetScope) 
+            {
+                //对self的支持
+                if ( keywordRoot === 'self') 
+                {
+                    //查找当前scope selfObjName
+                    let selfObjName = Utils.getCurrentScopeAstSelfObjName(targetScope);
+                    if(selfObjName)
                     {
-                        break;
+                        keywordRoot = selfObjName;
                     }
-
                 }
+
+                item = Utils.findDefinedItemInScopeAstInfo( keywordRoot , targetScope );
+                item = item.item;
             }
+
+            //旧的遍历方式 弃用 abandon
+            // let checkLine = _position.line -1;
+            // var scopeList = [];
+            // if (_docAstInfo.scopeAstStack) {
+
+            //     for (let i = 0; i < _docAstInfo.scopeAstStack.length; i++) {
+            //         const scopeAstInfo = _docAstInfo.scopeAstStack[i];
+
+            //         for (let j = 0; j < scopeAstInfo.scope.nodes.length; j++) {
+            //             const node = scopeAstInfo.scope.nodes[j];
+            //             if(node.type == 'Identifier')
+            //             {
+            //                 if (node.name == keywordRoot ) {
+            //                     //找局部
+            //                     item = Utils.findDefinedItemInScopeAstInfo( keywordRoot , scopeAstInfo );
+            //                     item = item.item;
+            //                     break;
+            //                 }
+            //             }
+            //         }
+
+            //         if(item)
+            //         {
+            //             break;
+            //         }
+
+            //     }
+            // }
+
         }catch(excp)
         {
             console.log("查找DocAstInfo 错误 :" + excp );
@@ -304,7 +315,8 @@ export class LuaCompletionItemProvider implements vscode.CompletionItemProvider
         if(item)
         {
             //找子孙
-            for (let index = 1; index < keywords.length; index++) {
+            for (let index = 1; index < keywords.length; index++) 
+            {
                 const subkeyword = keywords[index];
                 subitem = item.children.get(subkeyword);
                 if(subitem)
@@ -326,7 +338,8 @@ export class LuaCompletionItemProvider implements vscode.CompletionItemProvider
             if(item.valueItem.type != ELuaSyntaxItemType.Value)
             {
                 //找子孙
-                for (let index = 1; index < keywords.length; index++) {
+                for (let index = 1; index < keywords.length; index++) 
+                {
                     const subkeyword = keywords[index];
                     subitem = item.valueItem.children.get(subkeyword);
                     if(subitem)

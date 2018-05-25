@@ -105,10 +105,10 @@ export class SysParsor implements System
                                 {
     
                                     //用于断点某个指定文档
-                                    // if (_uri.path.search("Common/")!= -1) {
-                                    //     //Bingo
-                                    //     console.log("Bingo");
-                                    // }
+                                    if (_uri.path.search("Panel_UserInfo")!= -1) {
+                                        //Bingo
+                                        console.log("Bingo");
+                                    }
     
                                     SysLogger.getSingleton().log("ParseLuaFile: " + _uri);
                                     barItem.text = _uri.path;
@@ -203,9 +203,19 @@ export class SysParsor implements System
                         var posStart = null;
                         var lineTex = this.currentDoc.doc.lineAt(node.loc.start.line-1);
 
-                        var matchRet = lineTex.text.match("function\\s*[a-zA-Z_.]*\\(");//"function(\\s+[a-zA-Z_]\\w*(.[a-zA-Z_]\\w*)*\\s*)?\\s*\\("
+                        var matchRet = lineTex.text.match("function\\s*[a-zA-Z_.:]*\\(");//"function(\\s+[a-zA-Z_]\\w*(.[a-zA-Z_]\\w*)*\\s*)?\\s*\\("
 
                         if ( matchRet !=null) {
+
+                            //如果方法是成员方法（:）取类名作为域self名称
+                            let className = matchRet[0].replace(/(function|\s|\()/g,"");
+                            let names = className.split(":");
+                            if ( names ) {
+                                className = names[0];
+                            }
+                            this.currentScopeAst.selfObjName = className;
+
+                            //找参数
                             var startCharactor = lineTex.text.search("\\(");
 
                             posStart = new vscode.Position(node.loc.start.line-1,startCharactor);
@@ -770,6 +780,17 @@ export class SysParsor implements System
         if (node.base.type == 'Identifier') {
 
             var rootItem;
+
+            //把self名称换成类名
+            if ( node.base.name === 'self' ) {
+                
+                let selfObjName = Utils.getCurrentScopeAstSelfObjName(parsor.currentScopeAst);
+                if(selfObjName)
+                {
+                    node.base.name = selfObjName;
+                }           
+                
+            }
 
             //逐级取item
             var ret = Utils.findDefinedItemInScopeAstInfo(node.base.name,parsor.currentScopeAst);

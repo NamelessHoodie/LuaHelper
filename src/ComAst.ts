@@ -54,12 +54,14 @@ export class LuaSyntaxItem
 export class ScopeAstInfo
 {
     scopeIndex : number;
-    //scope起始行数从0计数
+    //scope起始行数从0计数 提供对块的快速索引
     startline :number = -1;
     endline :number = -1;
     scope : Scope ;
     parent : ScopeAstInfo;
     docAst : DocAstInfo;
+    //提供对块内self的指向
+    selfObjName: string;
     localItems = new Map<string,LuaSyntaxItem>();
     //如果这个区域是函数则有参数
     paramsItems = new Map<string,LuaSyntaxItem>();

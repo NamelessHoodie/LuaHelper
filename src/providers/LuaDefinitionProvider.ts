@@ -189,7 +189,7 @@ export class GoDefinitionProvider implements vscode.DefinitionProvider
 
         //先查找keywords[0] 把祖宗找到
         //---------------------------------------------
-        //在AstDoc的scopeStack中查找對應的socpe
+        //在AstDoc的scopeStack中通过目标行数查找對應的socpe
         //找到目標socpe后再逐級查找Item
         try{
             let checkLine = keywordPos.line -1;
@@ -205,6 +205,16 @@ export class GoDefinitionProvider implements vscode.DefinitionProvider
                 
                 if ( scopeList.length > 0 ) {
                     var targetScope = scopeList[scopeList.length-1];
+                    //对self的支持
+                    if ( keywords[0] === 'self') {
+                        //查找当前scope selfObjName
+                        let selfObjName = Utils.getCurrentScopeAstSelfObjName(targetScope);
+                        if(selfObjName)
+                        {
+                            keywords[0] = selfObjName;
+                        }
+                    }
+
                     //找局部
                     var ret = Utils.findDefinedItemInScopeAstInfo(keywords[0],targetScope);
                     item = ret.item;
