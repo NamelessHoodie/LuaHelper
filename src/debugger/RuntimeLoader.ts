@@ -1,7 +1,7 @@
 
 import child_process = require('child_process');
 var path = require('path');
-
+import {SysLogger} from '../Utils'
 
 /**
  * Load a runtime or attach to a runtime for debuging.
@@ -47,8 +47,8 @@ export class RuntimeLoader
                     shell: true
                 };
 
-
-
+            SysLogger.getSingleton().log('lua starter:' + luaScript);
+            
             let exePath = debugPath + '/luabin/lua.exe -e "' +luaScript + '"';
             luaStartProc = child_process.execFile(exePath, null, options);
             //luaStartProc = child_process.exec('lua -e "'+luaScript + '"')
