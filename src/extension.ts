@@ -89,7 +89,7 @@ export function activate(context: vscode.ExtensionContext) {
         const provider = new MockConfigurationProvider()
         context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('mock', provider));
         context.subscriptions.push(provider);
-
+        context.subscriptions.push(SysLogger.getSingleton());
 
         // context.subscriptions.push(fswatcher);
         // context.subscriptions.push(SysLogger.getSingleton());
@@ -97,6 +97,8 @@ export function activate(context: vscode.ExtensionContext) {
         // context.subscriptions.push(dpProvider);
         // context.subscriptions.push(cpProvider);
         // context.subscriptions.push(onDidChangedisPose);
+        SysLogger.getSingleton().log('end.............');
+        
         
     }catch( excp )
     {

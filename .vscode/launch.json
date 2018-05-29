@@ -38,7 +38,7 @@
 			"name": "Server",
 			"cwd": "${workspaceFolder}",
 			"program": "${workspaceFolder}/src/debugger/DebugAdapter.ts",
-			"args": [ "--server=49111" ],
+			"args": [ "--server=4711" ],
 			"outFiles": [ "${workspaceFolder}/out/**/*.js" ]
 		}
     ],

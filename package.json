@@ -124,10 +124,11 @@
 					{
                         "name": "launch-alone",
                         "type": "lua",
-                        "port": 49111,
+                        "port": 47111,
 						"runtimeType": "standalone",
 						"request": "launch",
-						"stopOnEntry": true
+                        "stopOnEntry": true,
+                        "localRoot":"${workspaceRoot}"
 					}
                 ]  
             }
@@ -145,11 +146,10 @@
         "luaparse": "^0.2.1",
         "vscode-debugadapter": "1.27.0",
         "vscode-debugprotocol": "1.27.0",
-        "vscode": "^1.1.6"
+        "vscode": "^1.1.0"
     },
     "devDependencies": {
         "typescript": "^2.6.1",
-        "vscode": "^1.1.6",
         "tslint": "^5.8.0",
         "@types/node": "^7.0.43",
         "@types/mocha": "^2.2.42"

@@ -9,7 +9,7 @@ local function createSocket()
 	local base = _G
 	local string = require("string")
 	local math = require("math")
-	local socket = require("socket.core")
+	local socket = require("socket")--require("socket.core")
 	
 	local _M = socket
 	
@@ -146,6 +146,8 @@ local function createSocket()
 	
 	_M.source = _M.choose(sourcet)
 	
+	print("_CreateSocketEnd222 .. " .. tostring(_M));
+
 	return _M
 end
 
@@ -643,7 +645,7 @@ local function debugger_dump(value, desciption, nesting)
 		return tostring(v)
 	end
 	local traceback = debugger_strSplit(debug.traceback("", 2), "\n")
-	print1("dump from: " .. debugger_strTrim(traceback[3]))
+	print("dump from: " .. debugger_strTrim(traceback[3]))
 	local function _dump(value, desciption, indent, nest, keylen)
 		desciption = desciption or "<var>"
 		spc = ""
@@ -685,7 +687,7 @@ local function debugger_dump(value, desciption, nesting)
 			end
 		end
 	end
-	_dump(value, desciption, "- ", 1)
+	_dump(value, desciption, "-- ", 1)
 	for i, line in ipairs(result) do
 		print1(line)
 	end
@@ -1104,9 +1106,10 @@ local function ResetDebugInfo()
 	LuaDebugger.StepNext = false
 	LuaDebugger.StepOut = false
 	LuaDebugger.StepNextLevel = 0
-	print("ResetDebugInfoResetDebugInfoResetDebugInfoResetDebugInfoResetDebugInfo")
+	print1("ResetDebugResetDebugResetDebugResetDebugResetDebugResetDebug")
 end
 local function debugger_loop(server)
+	print1("debugger_loop start..........");
 	server = debug_server
 	--命令
 	local command
@@ -1117,8 +1120,10 @@ local function debugger_loop(server)
 		if(line) then
 			local netData = json.decode(line)
 			local event = netData.event;
+			print("recv........>>" .. event);
 			local body = netData.data;
 			if event == LuaDebugger.event.S2C_SetBreakPoints then
+				print1("-->S2C_SetBreakPoints")
 				--设置断点信息
 				local function setB()
 					debugger_setBreak(body)
@@ -1127,12 +1132,39 @@ local function debugger_loop(server)
 					print(error)
 				end)
 			elseif event == LuaDebugger.event.S2C_RUN then
+				-- local function run()
+				-- 	print1("1111");
+				-- 	LuaDebugger.runTimeType = body.runTimeType
+				-- 	print1("22222");
+				-- 	LuaDebugger.isProntToConsole = body.isProntToConsole
+				-- 	print1("3333");
+				-- 	ResetDebugInfo()
+				-- 	LuaDebugger.Run = true
+				-- 	print1("444");
+				-- 	local data = coroutine.yield()
+				-- 	LuaDebugger.currentDebuggerData = data;
+				-- 	debugger_sendMsg(server, data.event, {
+				-- 		stack = data.stack
+				-- 	})
+
+				-- 	print1("5555");
+
+				-- end
+				-- xpcall(run, function(error)
+				-- 	print(error)
+				-- end)
+
+				print1("-->S2C_RUN？" .. tostring(body.runTimeType) .. '|' .. tostring(body.isProntToConsole) .. '|' .. LuaDebugger.isProntToConsole);
 				LuaDebugger.runTimeType = body.runTimeType
+				print1("-->S2C_RUN？1")
 				LuaDebugger.isProntToConsole = body.isProntToConsole
+				print1("-->S2C_RUN11111")
 				ResetDebugInfo()
 				LuaDebugger.Run = true
+				print1("-->S2C_RUN222222:" .. data.event)
 				local data = coroutine.yield()
 				LuaDebugger.currentDebuggerData = data;
+				print1("-->S2C_RUN22:" .. data.event)
 				debugger_sendMsg(server, data.event, {
 					stack = data.stack
 				})
@@ -1367,6 +1399,7 @@ local function start()
 	local socket = createSocket()
 	print(controller_host)
 	print(controller_port)
+	print("controller_host:" .. controller_host);
 	local server = socket.connect(controller_host, controller_port)
 	debug_server = server;
 	if server then

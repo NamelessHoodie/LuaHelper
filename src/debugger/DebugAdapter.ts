@@ -105,7 +105,7 @@ export class LuaDebugAdapter extends LoggingDebugSession
                 da.luaStartProc.kill()
             }
 
-            da.runtimeLoader = new RuntimeLoader();
+            da.runtimeLoader = new RuntimeLoader(this);
             da.luaStartProc = da.runtimeLoader.loadRuntime(args);
             
             da.luaStartProc.on('error', error => {
@@ -115,7 +115,8 @@ export class LuaDebugAdapter extends LoggingDebugSession
             da.luaStartProc.stderr.setEncoding('utf8');
             da.luaStartProc.stderr.on('data', error => {
                 if (typeof(error) == 'string' ) {
-                    da.log("stderr:" + error);
+                    da.log("stderr:-------------------------------------------");
+                    da.log( error );
                 }
             });
 
@@ -123,7 +124,8 @@ export class LuaDebugAdapter extends LoggingDebugSession
             da.luaStartProc.stdout.setEncoding('utf8');
             da.luaStartProc.stdout.on('data', data => {
                 if (typeof(data) == 'string' ) {
-                    da.log("stdout:" + data);
+                    da.log("stdout:-------------------------------------------");
+                    da.log( data );
                 }
             });
 
@@ -156,6 +158,8 @@ export class LuaDebugAdapter extends LoggingDebugSession
 
     protected setBreakPointsRequest(response: DebugProtocol.SetBreakpointsResponse, args: DebugProtocol.SetBreakpointsArguments): void 
     {
+
+        this.log("setBreakPointsRequest....");
         if( this._breakPointData == null)
         {
             this._breakPointData = new BreakpointInfo();
@@ -164,10 +168,16 @@ export class LuaDebugAdapter extends LoggingDebugSession
 		var path = args.source.path;
 		var clientLines = args.lines;
 
-        // var breakpoints = this._breakPointData.verifiedBreakPoint(path,clientLines);
-		// response.body = {
-		// 	breakpoints: breakpoints
-        // };
+        var breakpoints:DebugProtocol.Breakpoint[] = this._breakPointData.verifiedBreakPoint(path,clientLines);
+
+        var breakInfoStr = "";
+        breakpoints.forEach(element => {
+            breakInfoStr += element.line;
+        });
+
+		response.body = {
+			breakpoints: breakpoints
+        };
         
         // if (this._luaDebugServer != null && this._luaDebugServer.connState == EConnState.Connected) {
 		// 	var data = this._breakPointData.getClientBreakPointInfo(path)
@@ -200,12 +210,12 @@ export class LuaDebugAdapter extends LoggingDebugSession
 
     protected stackTraceRequest(response: DebugProtocol.StackTraceResponse, args: DebugProtocol.StackTraceArguments): void
     {
-
+        this.log("stackTraceRequest....");
     }
 
     protected scopesRequest(response: DebugProtocol.ScopesResponse, args: DebugProtocol.ScopesArguments): void
     {
-        
+        this.log("scopesRequest....");
     }
 
     protected variablesRequest(response: DebugProtocol.VariablesResponse, args: DebugProtocol.VariablesArguments): void
