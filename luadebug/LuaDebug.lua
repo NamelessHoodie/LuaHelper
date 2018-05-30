@@ -1116,11 +1116,11 @@ local function debugger_loop(server)
 	local eval_env = {}
 	local arg
 	while true do
+		print1("recv...");
 		local line, status = server:receive()
 		if(line) then
 			local netData = json.decode(line)
 			local event = netData.event;
-			print("recv........>>" .. event);
 			local body = netData.data;
 			if event == LuaDebugger.event.S2C_SetBreakPoints then
 				print1("-->S2C_SetBreakPoints")
@@ -1132,42 +1132,47 @@ local function debugger_loop(server)
 					print(error)
 				end)
 			elseif event == LuaDebugger.event.S2C_RUN then
-				-- local function run()
-				-- 	print1("1111");
-				-- 	LuaDebugger.runTimeType = body.runTimeType
-				-- 	print1("22222");
-				-- 	LuaDebugger.isProntToConsole = body.isProntToConsole
-				-- 	print1("3333");
-				-- 	ResetDebugInfo()
-				-- 	LuaDebugger.Run = true
-				-- 	print1("444");
-				-- 	local data = coroutine.yield()
-				-- 	LuaDebugger.currentDebuggerData = data;
-				-- 	debugger_sendMsg(server, data.event, {
-				-- 		stack = data.stack
-				-- 	})
+				local function run()
+					print1("-->S2C_RUN？" .. tostring(body.runTimeType) .. '|' .. tostring(body.isProntToConsole) .. '|' .. LuaDebugger.isProntToConsole);
+					print1("1111");
+					LuaDebugger.runTimeType = body.runTimeType
+					print1("22222");
+					--LuaDebugger.isProntToConsole = body.isProntToConsole
+					print1("3333");
+					ResetDebugInfo()
+					LuaDebugger.Run = true
+					print1("444");
+					local data = coroutine.yield()
+					print1("444111");
+					LuaDebugger.currentDebuggerData = data;
+					print1("4442222");
+					debugger_sendMsg(server, data.event, {
+						stack = data.stack
+					})
 
-				-- 	print1("5555");
+					print1("5555");
 
-				-- end
-				-- xpcall(run, function(error)
-				-- 	print(error)
-				-- end)
+				end
 
-				print1("-->S2C_RUN？" .. tostring(body.runTimeType) .. '|' .. tostring(body.isProntToConsole) .. '|' .. LuaDebugger.isProntToConsole);
-				LuaDebugger.runTimeType = body.runTimeType
-				print1("-->S2C_RUN？1")
-				LuaDebugger.isProntToConsole = body.isProntToConsole
-				print1("-->S2C_RUN11111")
-				ResetDebugInfo()
-				LuaDebugger.Run = true
-				print1("-->S2C_RUN222222:" .. data.event)
-				local data = coroutine.yield()
-				LuaDebugger.currentDebuggerData = data;
-				print1("-->S2C_RUN22:" .. data.event)
-				debugger_sendMsg(server, data.event, {
-					stack = data.stack
-				})
+				xpcall(run, function(error)
+					print(error)
+				end)
+
+				-- print1("-->S2C_RUN？" .. tostring(body.runTimeType) .. '|' .. tostring(body.isProntToConsole) .. '|' .. LuaDebugger.isProntToConsole);
+				-- LuaDebugger.runTimeType = body.runTimeType
+				-- print1("-->S2C_RUN？1")
+				-- LuaDebugger.isProntToConsole = body.isProntToConsole
+				-- print1("-->S2C_RUN11111")
+				-- ResetDebugInfo()
+				-- LuaDebugger.Run = true
+				-- print1("-->S2C_RUN222222:" .. data.event)
+				-- local data = coroutine.yield()
+				-- LuaDebugger.currentDebuggerData = data;
+				-- print1("-->S2C_RUN22:" .. data.event)
+				-- debugger_sendMsg(server, data.event, {
+				-- 	stack = data.stack
+				-- })
+
 			elseif event == LuaDebugger.event.S2C_ReqVar then
 				--请求数据信息
 				debugger_getBreakVar(body, server)
@@ -1213,12 +1218,13 @@ local function debugger_loop(server)
 end
 coro_debugger = coroutine.create(debugger_loop)
 debug_hook = function(event, line)
-	
+	print("***hook:" .. tostring(event) );
 	if(not LuaDebugger.isHook) then
 		return
 	end
 	if(LuaDebugger.Run) then
 		if(event == "line") then
+			--print1("***:" .. line);
 			local isCheck = false
 			
 			for k, breakInfo in pairs(LuaDebugger.breakInfos) do
@@ -1270,6 +1276,7 @@ debug_hook = function(event, line)
 	
 	local file = nil
 	if(event == "call") then
+		print1("call....................");
 		-- if(not LuaDebugger.StepOut) then
 		if(LuaDebugger.StepNext) then
 			LuaDebugger.StepNextLevel = LuaDebugger.StepNextLevel+1
@@ -1282,6 +1289,7 @@ debug_hook = function(event, line)
 		
 		file = getSource(source);
 		LuaDebugger.currentFileName = file
+		print1("callfile:" .. file);
 		-- end
 	elseif(event == "return" or event == "tail return") then
 		-- if(not LuaDebugger.StepOut) then
@@ -1322,7 +1330,7 @@ debug_hook = function(event, line)
 			LuaDebugger.currentFileName = file
 		end
 		file = LuaDebugger.currentFileName
-		
+		print1("currentFilename:" .. file);
 
 		--判断断点
 		local breakInfo = LuaDebugger.breakInfos[file]
@@ -1415,11 +1423,14 @@ local function start()
 				name = "mainSocket"
 			})
 			xpcall(function()
+				print1("SetHook...");
 				debug.sethook(debug_hook, "lrc")
 			end, function(error)
 				print("error:", error)
 			end)
+			print1("first start.....");
 			coroutine.resume(coro_debugger, server)
+			print1("66666");
 		end
 	end
 end
@@ -1443,6 +1454,8 @@ function StartDebug(host, port)
 		-- body
 		print(error)
 	end)
+
+	print1("55555");
 	return debugger_receiveDebugBreakInfo, debugger_xpcall
 end
 return StartDebug
