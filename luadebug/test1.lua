@@ -1,5 +1,22 @@
-package.path = package.path .. ';E:/Test/LuaVsHelper2/luahelper/luadebug/?.lua;E:/Test/LuaVsHelper2/luahelper/luadebug/luabin;C:/Users/pcp25451/Desktop/LuaTest2/?.lua;'
-require('LuaDebug')('localhost',47111);
+print('end----------------1')
+print('end----------------1')
+print('end----------------1')
+print('end----------------1')
+print('end----------------1')
+print('end----------------1')
+print('end----------------1')
+print('end----------------1')
+print('end----------------1')
+print('end----------------1')
+print('end----------------1')
+print('end----------------1')
+print('end----------------1')
+print('end----------------1')
+print('end----------------1')
+print('end----------------1')
+
+
+
 --require('Main');
 
 

@@ -815,6 +815,7 @@ end
 --CCDirector:sharedDirector():getScheduler()
 local debugger_setBreak = nil
 local function debugger_receiveDebugBreakInfo()
+	print("debugger_receiveDebugBreakInfo.." .. tostring(breakInfoSocket));
 	if(breakInfoSocket) then
 		local msg, status = breakInfoSocket:receive()
 		if(msg) then
@@ -1132,46 +1133,46 @@ local function debugger_loop(server)
 					print(error)
 				end)
 			elseif event == LuaDebugger.event.S2C_RUN then
-				local function run()
-					print1("-->S2C_RUN？" .. tostring(body.runTimeType) .. '|' .. tostring(body.isProntToConsole) .. '|' .. LuaDebugger.isProntToConsole);
-					print1("1111");
-					LuaDebugger.runTimeType = body.runTimeType
-					print1("22222");
-					--LuaDebugger.isProntToConsole = body.isProntToConsole
-					print1("3333");
-					ResetDebugInfo()
-					LuaDebugger.Run = true
-					print1("444");
-					local data = coroutine.yield()
-					print1("444111");
-					LuaDebugger.currentDebuggerData = data;
-					print1("4442222");
-					debugger_sendMsg(server, data.event, {
-						stack = data.stack
-					})
+				-- local function run()
+				-- 	print1("-->S2C_RUN？" .. tostring(body.runTimeType) .. '|' .. tostring(body.isProntToConsole) .. '|' .. LuaDebugger.isProntToConsole);
+				-- 	print1("1111");
+				-- 	LuaDebugger.runTimeType = body.runTimeType
+				-- 	print1("22222");
+				-- 	--LuaDebugger.isProntToConsole = body.isProntToConsole
+				-- 	print1("3333");
+				-- 	ResetDebugInfo()
+				-- 	LuaDebugger.Run = true
+				-- 	print1("444");
+				-- 	local data = coroutine.yield()
+				-- 	print1("444111");
+				-- 	LuaDebugger.currentDebuggerData = data;
+				-- 	print1("4442222");
+				-- 	debugger_sendMsg(server, data.event, {
+				-- 		stack = data.stack
+				-- 	})
 
-					print1("5555");
+				-- 	print1("5555");
 
-				end
+				-- end
 
-				xpcall(run, function(error)
-					print(error)
-				end)
+				-- xpcall(run, function(error)
+				-- 	print1(error)
+				-- end)
 
-				-- print1("-->S2C_RUN？" .. tostring(body.runTimeType) .. '|' .. tostring(body.isProntToConsole) .. '|' .. LuaDebugger.isProntToConsole);
-				-- LuaDebugger.runTimeType = body.runTimeType
-				-- print1("-->S2C_RUN？1")
-				-- LuaDebugger.isProntToConsole = body.isProntToConsole
-				-- print1("-->S2C_RUN11111")
-				-- ResetDebugInfo()
-				-- LuaDebugger.Run = true
-				-- print1("-->S2C_RUN222222:" .. data.event)
-				-- local data = coroutine.yield()
-				-- LuaDebugger.currentDebuggerData = data;
-				-- print1("-->S2C_RUN22:" .. data.event)
-				-- debugger_sendMsg(server, data.event, {
-				-- 	stack = data.stack
-				-- })
+				print1("-->S2C_RUN？" .. tostring(body.runTimeType) .. '|' .. tostring(body.isProntToConsole) .. '|' .. LuaDebugger.isProntToConsole);
+				LuaDebugger.runTimeType = body.runTimeType
+				print1("-->S2C_RUN？1")
+				--LuaDebugger.isProntToConsole = body.isProntToConsole
+				print1("-->S2C_RUN11111")
+				ResetDebugInfo()
+				LuaDebugger.Run = true
+				print1("-->S2C_RUN222222:")
+				local data = coroutine.yield()
+				LuaDebugger.currentDebuggerData = data;
+				print1("-->S2C_RUN22:" .. data.event)
+				debugger_sendMsg(server, data.event, {
+					stack = data.stack
+				})
 
 			elseif event == LuaDebugger.event.S2C_ReqVar then
 				--请求数据信息
@@ -1224,7 +1225,7 @@ debug_hook = function(event, line)
 	end
 	if(LuaDebugger.Run) then
 		if(event == "line") then
-			--print1("***:" .. line);
+			print("***:" .. line);
 			local isCheck = false
 			
 			for k, breakInfo in pairs(LuaDebugger.breakInfos) do
@@ -1396,6 +1397,7 @@ debug_hook = function(event, line)
 	end
 end
 local function debugger_xpcall()
+	print("debugger_xpcall..") ;
 	--调用 coro_debugger 并传入 参数
 	local data = debugger_stackInfo(4, LuaDebugger.event.C2S_HITBreakPoint)
 	--挂起等待调试器作出反应
@@ -1428,9 +1430,15 @@ local function start()
 			end, function(error)
 				print("error:", error)
 			end)
-			print1("first start.....");
-			coroutine.resume(coro_debugger, server)
-			print1("66666");
+			print("first start.....");
+			local cortRet,errMsg = coroutine.resume(coro_debugger, server)
+			if( not cortRet ) then
+				print("coroutine excption......:" .. errMsg);
+			else
+				print("coroutine end......");
+			end
+
+			
 		end
 	end
 end
@@ -1454,8 +1462,8 @@ function StartDebug(host, port)
 		-- body
 		print(error)
 	end)
-
-	print1("55555");
+	print("StartDebugEnd");
 	return debugger_receiveDebugBreakInfo, debugger_xpcall
 end
+
 return StartDebug

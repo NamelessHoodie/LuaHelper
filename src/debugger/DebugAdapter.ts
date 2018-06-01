@@ -130,8 +130,6 @@ export class LuaDebugAdapter extends LoggingDebugSession
             });
 
 
-            
-
             da.luaStartProc.on('close', function (code) {
                 da.log("close");
                 if (da.runtimeLoader.childPid) {
@@ -139,7 +137,7 @@ export class LuaDebugAdapter extends LoggingDebugSession
                         process.kill(da.runtimeLoader.childPid);
                     }
                     catch (e) {
-                        console.log('error..');
+                        da.log('error..');
                     }
                 }
                 if(da.runtimeType == "LuaTest"){

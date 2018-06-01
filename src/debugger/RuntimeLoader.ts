@@ -48,9 +48,14 @@ export class RuntimeLoader
                 luaScript += element + "/?.lua;'" 
             }
 
-            luaScript += "require('LuaDebug')('localhost',"+ args.port +")\n"
-            luaScript += "\nrequire('"+ args.mainFile +"')\n";
-            luaScript += "print('end----------------')";
+            luaScript += "require('LuaDebug')('localhost',"+ args.port +")"
+            luaScript += "print('end--------0000--------');";
+            // luaScript += "ttt = require('LuaDebug');";
+            // luaScript += "vvv = require('test1');";
+            // //luaScript += "ttt('localhost',"+ args.port +")";
+            luaScript += "require('"+ args.mainFile +"')";
+            luaScript += "print('end----------------');";
+            
             
             options = {
                 encoding: 'utf8',
@@ -60,12 +65,13 @@ export class RuntimeLoader
             this.da.log('lua starter:' + luaScript);
             
             let exePath = debuggerPath + '/luabin/lua.exe -e "' +luaScript + '"';
-            luaStartProc = child_process.execFile(exePath, null, options,(error:Error,stdout,stderr)=>{
+            luaStartProc = child_process.execFile(exePath, options,(error:Error,stdout,stderr)=>{
+            //luaStartProc = child_process.exec(exePath, options,(error:Error,stdout,stderr)=>{
                 if ( error ) {
                     this.da.log('lua exec has a error');
                 } 
 
-                // this.da.log('stdout>>:' + stdout);
+                //this.da.log('stdout>>:' + stdout);
                 // this.da.log('stderr>>:' + stderr);
 
             });

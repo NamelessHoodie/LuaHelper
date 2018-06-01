@@ -317,13 +317,13 @@ export class LuaDebugServer extends EventEmitter
         
                 socket.on("data",(data:string)=>{
         
-                    self._da.log("on data ............");
                     if(!data)
                     {
                         self._da.log("errordata:\n");
                     }
         
-                    self._da.log("data:" + data );
+                    self._da.log("on data ............");
+                    //self._da.log("data:" + data );
         
                     var jsonStr:string = self._recvDatas;
                     if(jsonStr) {
