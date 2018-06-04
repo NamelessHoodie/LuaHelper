@@ -5,6 +5,7 @@ import { BreakpointInfo } from './BreakPointInfo';
 import { LuaDebugServer , EConnState,LuaDebuggerProtocal } from './LuaDebugServer';
 import * as child_process from 'child_process';
 import { RuntimeLoader } from './RuntimeLoader';
+import { DebugMonitor } from './DebugMonitor'
 
 
 export class LuaDebugAdapter extends LoggingDebugSession
@@ -13,6 +14,7 @@ export class LuaDebugAdapter extends LoggingDebugSession
     public isHitBreak: boolean = false
     _breakPointData:BreakpointInfo;
     _luaDebugServer:LuaDebugServer;
+    _debugMonitor:DebugMonitor;
     isPrintToConsole:number;
     runtimeType:string;
     luaStartProc:child_process.ChildProcess;
@@ -39,9 +41,32 @@ export class LuaDebugAdapter extends LoggingDebugSession
         this.sendEvent(new OutputEvent(msg + "\n"));
     }
 
+    //data數據結構
+    /**data[
+     *      stack = [1：[
+     *                  src         = 
+     *                  scoreName   =
+     *                  currentline =
+     *                  linedefined =
+     *                  what        =
+     *                  nameWhat    =
+     *              ]];
+     *      vars =  [
+     *                  1:var1;
+     *                  2:var2;
+     *              ]
+     *      funcs = [
+     *                  1:func1;
+     *                  2:func2;                 
+     *              ]
+     *      event = "C2S_HITBreakPoint"
+     *      funcsLength = #funcs
+     * ]
+     * 
+    **/
     protected setupProcessHanlders() {
 		this._luaDebugServer.on('C2S_HITBreakPoint', result => {
-			//this._luaDebugServer.setStackInfos(result.data.stack)
+			this._debugMonitor.setStackInfos(result.data.stack)
 			this.sendEvent(new StoppedEvent('breakpoint', 1));
 		})
 		this._luaDebugServer.on('C2S_LuaPrint', result => {
@@ -49,8 +74,6 @@ export class LuaDebugAdapter extends LoggingDebugSession
 		})
 
 	}
-
-
 
     protected initializeRequest(response: DebugProtocol.InitializeResponse, 
                             args: DebugProtocol.InitializeRequestArguments): void 
@@ -218,32 +241,32 @@ export class LuaDebugAdapter extends LoggingDebugSession
 
     protected variablesRequest(response: DebugProtocol.VariablesResponse, args: DebugProtocol.VariablesArguments): void
     {
-
+        this.log("variablesRequest....");
     }
 
     protected continueRequest(response: DebugProtocol.ContinueResponse, args: DebugProtocol.ContinueArguments): void
     {
-
+        this.log("continueRequest....");
     }
 
     protected reverseContinueRequest(response: DebugProtocol.ReverseContinueResponse, args: DebugProtocol.ReverseContinueArguments) : void 
     {
-
+        this.log("reverseContinueRequest....");
     }
 
     protected nextRequest(response: DebugProtocol.NextResponse, args: DebugProtocol.NextArguments): void
     {
-
+        this.log("nextRequest....");
     }
 
     protected stepBackRequest(response: DebugProtocol.StepBackResponse, args: DebugProtocol.StepBackArguments): void
     {
-
+        this.log("stepBackRequest....");
     }
 
     protected evaluateRequest(response: DebugProtocol.EvaluateResponse, args: DebugProtocol.EvaluateArguments): void
     {
-
+        this.log("evaluateRequest....");
     }
 
 } 

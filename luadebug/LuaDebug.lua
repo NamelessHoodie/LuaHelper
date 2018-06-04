@@ -757,7 +757,30 @@ local function debugger_getvalue(f)
 	end
 	return {locals = locals, ups = ups}
 end
---获取堆栈
+
+--获取堆栈數據
+-- data[
+--        stack = [1：[
+--                    src         = 
+--                    scoreName   =
+--                    currentline =
+--                    linedefined =
+--                    what        =
+--                    nameWhat    =
+--                ]];
+--        vars =  [
+--                    1:var1;
+--                    2:var2;
+--                ]
+--        funcs = [
+--                    1:func1;
+--                    2:func2;                 
+--                ]
+--        event = "C2S_HITBreakPoint"
+--        funcsLength = #funcs
+--   ]  
+    
+
 debugger_stackInfo = function(ignoreCount, event)
 	local datas = {}
 	local stack = {}
@@ -1006,6 +1029,7 @@ debugger_exeLuaString = function(data, isBreakPoint)
 	if(status) then
 		debugger_sendMsg(debug_server, LuaDebugger.event.C2S_LoadLuaScript, {msg = "执行代码成功"})
 		if(isBreakPoint) then
+			print1("xxx22222") ;
 			debugger_sendMsg(debug_server, LuaDebugger.event.C2S_HITBreakPoint, LuaDebugger.currentDebuggerData.stack)
 		end
 	else
@@ -1389,7 +1413,6 @@ debug_hook = function(event, line)
 				if(hitFieName ~= "") then
 					local data = debugger_stackInfo(3, LuaDebugger.event.C2S_HITBreakPoint)
 					--挂起等待调试器作出反应
-					
 					coroutine.resume(coro_debugger, data)
 				end
 			end
@@ -1397,7 +1420,7 @@ debug_hook = function(event, line)
 	end
 end
 local function debugger_xpcall()
-	print("debugger_xpcall..") ;
+	print1("debugger_xpcall..") ;
 	--调用 coro_debugger 并传入 参数
 	local data = debugger_stackInfo(4, LuaDebugger.event.C2S_HITBreakPoint)
 	--挂起等待调试器作出反应

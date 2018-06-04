@@ -323,7 +323,7 @@ export class LuaDebugServer extends EventEmitter
                     }
         
                     self._da.log("on data ............");
-                    //self._da.log("data:" + data );
+                    self._da.log("data:" + data );
         
                     var jsonStr:string = self._recvDatas;
                     if(jsonStr) {
@@ -369,6 +369,7 @@ export class LuaDebugServer extends EventEmitter
                             //断点设置成
                         } else if (event == LuaDebuggerProtocal.C2S_HITBreakPoint) {
         
+                            self._da.log("C2S_HITBreakPoint!!");
                             self._da.isHitBreak = true
                             self.emit("C2S_HITBreakPoint", jdata)
                         } else if (event == LuaDebuggerProtocal.C2S_ReqVar) {
