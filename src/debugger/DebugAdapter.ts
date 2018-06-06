@@ -193,33 +193,34 @@ export class LuaDebugAdapter extends LoggingDebugSession
     {
 
         this.log("setBreakPointsRequest....");
-        if( this._breakPointData == null)
-        {
-            this._breakPointData = new BreakpointInfo();
-        }
-
-		var path = args.source.path;
-		var clientLines = args.lines;
-
-        var breakpoints:DebugProtocol.Breakpoint[] = this._breakPointData.verifiedBreakPoint(path,clientLines);
-
-        var breakInfoStr = "";
-        breakpoints.forEach(element => {
-            breakInfoStr += element.line;
-        });
-
-		response.body = {
-			breakpoints: breakpoints
-        };
-        
-        // if (this._luaDebugServer != null && this._luaDebugServer.connState == EConnState.Connected) {
-		// 	var data = this._breakPointData.getClientBreakPointInfo(path)
-		// 	//这里需要做判断 如果 是 断点模式 那么就需要 用mainSocket 进行发送 如果为运行模式就用 breakPointSocket
-        //     this._luaDebugServer.sendMsg(LuaDebuggerProtocal.S2C_SetBreakPoints, data, 
-        //         this.isHitBreak == true ? this._luaDebugServer.mainSocket : this._luaDebugServer.breakPointSocket);
+        // if( this._breakPointData == null)
+        // {
+        //     this._breakPointData = new BreakpointInfo();
         // }
+
+		// var path = args.source.path;
+		// var clientLines = args.lines;
+
+        // var breakpoints:DebugProtocol.Breakpoint[] = this._breakPointData.verifiedBreakPoint(path,clientLines);
+
+        // var breakInfoStr = "";
+        // breakpoints.forEach(element => {
+        //     breakInfoStr += element.line;
+        // });
+
+		// response.body = {
+		// 	breakpoints: breakpoints
+        // };
         
-        this.sendResponse(response);
+        // // if (this._luaDebugServer != null && this._luaDebugServer.connState == EConnState.Connected) {
+		// // 	var data = this._breakPointData.getClientBreakPointInfo(path)
+		// // 	//这里需要做判断 如果 是 断点模式 那么就需要 用mainSocket 进行发送 如果为运行模式就用 breakPointSocket
+        // //     this._luaDebugServer.sendMsg(LuaDebuggerProtocal.S2C_SetBreakPoints, data, 
+        // //         this.isHitBreak == true ? this._luaDebugServer.mainSocket : this._luaDebugServer.breakPointSocket);
+        // // }
+        
+        // this.sendResponse(response);
+        this.log("setBreakPointsResponse....");
         
     }
 
