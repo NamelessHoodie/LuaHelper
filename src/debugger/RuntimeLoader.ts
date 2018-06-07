@@ -49,13 +49,7 @@ export class RuntimeLoader
             }
 
             luaScript += "require('LuaDebug')('localhost',"+ args.port +")"
-            luaScript += "print('end--------0000--------');";
-            // luaScript += "ttt = require('LuaDebug');";
-            // luaScript += "vvv = require('test1');";
-            // //luaScript += "ttt('localhost',"+ args.port +")";
             luaScript += "require('"+ args.mainFile +"')";
-            luaScript += "print('end----------------');";
-            
             
             options = {
                 encoding: 'utf8',

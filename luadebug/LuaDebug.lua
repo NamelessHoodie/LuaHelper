@@ -595,6 +595,21 @@ LuaDebugger.event = {
 	C2S_LoadLuaScript = 18,
 	C2S_DebugXpCall = 20,
 }
+
+--Description:重定向print到调试窗口
+--Params:
+--Return: 
+--Last Modify: Zahidle.PF
+function print( msg )
+	print1(">>>" .. msg);
+end
+
+
+function debuglog( msg )
+	print1("debug:" .. msg);
+end
+
+
 function print1(...)
 	if(LuaDebugger.isProntToConsole == 1 or LuaDebugger.isProntToConsole == 3) then
 		debugger_print(...)
@@ -645,7 +660,7 @@ local function debugger_dump(value, desciption, nesting)
 		return tostring(v)
 	end
 	local traceback = debugger_strSplit(debug.traceback("", 2), "\n")
-	print("dump from: " .. debugger_strTrim(traceback[3]))
+	debuglog("dump from: " .. debugger_strTrim(traceback[3]))
 	local function _dump(value, desciption, indent, nest, keylen)
 		desciption = desciption or "<var>"
 		spc = ""
@@ -689,7 +704,7 @@ local function debugger_dump(value, desciption, nesting)
 	end
 	_dump(value, desciption, "-- ", 1)
 	for i, line in ipairs(result) do
-		print1(line)
+		debuglog(line)
 	end
 end
 local function ToBase64(source_str)
@@ -838,7 +853,7 @@ end
 --CCDirector:sharedDirector():getScheduler()
 local debugger_setBreak = nil
 local function debugger_receiveDebugBreakInfo()
-	print("debugger_receiveDebugBreakInfo.." .. tostring(breakInfoSocket));
+	print1("debugger_receiveDebugBreakInfo.." .. tostring(breakInfoSocket));
 	if(breakInfoSocket) then
 		local msg, status = breakInfoSocket:receive()
 		if(msg) then
@@ -867,6 +882,26 @@ local function splitFilePath(path)
 	LuaDebugger.splitFilePaths[path] = arr
 	return arr
 end
+
+
+-- 断点信息数据结构：
+-- 	LuaDebugger.breakInfo[
+-- 		filename = breakInfo[
+-- 			serverpath = {
+-- 				pathName = "";
+-- 				lines =  [
+-- 					linenum1 = true,
+-- 					linenum4 = true,
+-- 					linenum6 = true
+-- 					...
+-- 				]
+-- 			}
+-- 			...
+-- 		]
+-- 		...
+-- 	]
+
+
 debugger_setBreak = function(datas)
 	local breakInfos = LuaDebugger.breakInfos
 	for i, data in ipairs(datas) do
@@ -1131,24 +1166,24 @@ local function ResetDebugInfo()
 	LuaDebugger.StepNext = false
 	LuaDebugger.StepOut = false
 	LuaDebugger.StepNextLevel = 0
-	print1("ResetDebugResetDebugResetDebugResetDebugResetDebugResetDebug")
+	debuglog("ResetDebugResetDebugResetDebugResetDebug")
 end
 local function debugger_loop(server)
-	print1("debugger_loop start..........");
+	debuglog("debugger_loop start..........");
 	server = debug_server
 	--命令
 	local command
 	local eval_env = {}
 	local arg
 	while true do
-		print1("recv...");
+		debuglog("recv...");
 		local line, status = server:receive()
 		if(line) then
 			local netData = json.decode(line)
 			local event = netData.event;
 			local body = netData.data;
 			if event == LuaDebugger.event.S2C_SetBreakPoints then
-				print1("-->S2C_SetBreakPoints")
+				debuglog("-->S2C_SetBreakPoints")
 				--设置断点信息
 				local function setB()
 					debugger_setBreak(body)
@@ -1157,43 +1192,16 @@ local function debugger_loop(server)
 					print(error)
 				end)
 			elseif event == LuaDebugger.event.S2C_RUN then
-				-- local function run()
-				-- 	print1("-->S2C_RUN？" .. tostring(body.runTimeType) .. '|' .. tostring(body.isProntToConsole) .. '|' .. LuaDebugger.isProntToConsole);
-				-- 	print1("1111");
-				-- 	LuaDebugger.runTimeType = body.runTimeType
-				-- 	print1("22222");
-				-- 	--LuaDebugger.isProntToConsole = body.isProntToConsole
-				-- 	print1("3333");
-				-- 	ResetDebugInfo()
-				-- 	LuaDebugger.Run = true
-				-- 	print1("444");
-				-- 	local data = coroutine.yield()
-				-- 	print1("444111");
-				-- 	LuaDebugger.currentDebuggerData = data;
-				-- 	print1("4442222");
-				-- 	debugger_sendMsg(server, data.event, {
-				-- 		stack = data.stack
-				-- 	})
 
-				-- 	print1("5555");
-
-				-- end
-
-				-- xpcall(run, function(error)
-				-- 	print1(error)
-				-- end)
-
-				print1("-->S2C_RUN？" .. tostring(body.runTimeType) .. '|' .. tostring(body.isProntToConsole) .. '|' .. LuaDebugger.isProntToConsole);
+				debuglog("-->S2C_RUN？" .. tostring(body.runTimeType) .. '|' .. tostring(body.isProntToConsole) .. '|' .. LuaDebugger.isProntToConsole);
 				LuaDebugger.runTimeType = body.runTimeType
-				print1("-->S2C_RUN？1")
 				--LuaDebugger.isProntToConsole = body.isProntToConsole
-				print1("-->S2C_RUN11111")
 				ResetDebugInfo()
 				LuaDebugger.Run = true
-				print1("-->S2C_RUN222222:")
+
 				local data = coroutine.yield()
 				LuaDebugger.currentDebuggerData = data;
-				print1("-->S2C_RUN22:" .. data.event)
+
 				debugger_sendMsg(server, data.event, {
 					stack = data.stack
 				})
@@ -1205,7 +1213,7 @@ local function debugger_loop(server)
 				ResetDebugInfo()
 				LuaDebugger.StepNext = true
 				LuaDebugger.StepInLevel = 0
-				print("------------------------------")
+				debuglog("------------------------------")
 				--设置当前文件名和当前行数
 				local data = coroutine.yield()
 				--重置调试信息
@@ -1243,13 +1251,13 @@ local function debugger_loop(server)
 end
 coro_debugger = coroutine.create(debugger_loop)
 debug_hook = function(event, line)
-	print("***hook:" .. tostring(event) );
+	--print("***hook:" .. tostring(event) );
 	if(not LuaDebugger.isHook) then
 		return
 	end
 	if(LuaDebugger.Run) then
 		if(event == "line") then
-			print("***:" .. line);
+			--print("***:" .. line);
 			local isCheck = false
 			
 			for k, breakInfo in pairs(LuaDebugger.breakInfos) do
@@ -1301,7 +1309,7 @@ debug_hook = function(event, line)
 	
 	local file = nil
 	if(event == "call") then
-		print1("call....................");
+		--print1("call....................");
 		-- if(not LuaDebugger.StepOut) then
 		if(LuaDebugger.StepNext) then
 			LuaDebugger.StepNextLevel = LuaDebugger.StepNextLevel+1
@@ -1355,7 +1363,6 @@ debug_hook = function(event, line)
 			LuaDebugger.currentFileName = file
 		end
 		file = LuaDebugger.currentFileName
-		print1("currentFilename:" .. file);
 
 		--判断断点
 		local breakInfo = LuaDebugger.breakInfos[file]

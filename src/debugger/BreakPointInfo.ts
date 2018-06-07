@@ -47,12 +47,12 @@ export class BreakpointInfo
 	}
 
     /**
-     * 验证所有断点信息并返回一个DebugProtocol.BreakPoint列表
+     * 以文档为单位验证该文档中所有断点行有效并返回一个指定断点所在行数的DebugProtocol.BreakPoint列表（这个可以防止修改未保存情况和一些无效的断点）
      * @param path 
      * @param berakLines 
      */
     public verifiedBreakPoint(path: string, berakLines: Array<number>):Array<Breakpoint> {
-
+		//找出指定path中所有有效行的行序号放入lines列表中，忽略掉注释和空行
 		this.line = 1;
 		this.currentText = readFileSync(path).toString();
 		this.length = this.currentText.length;
@@ -80,7 +80,7 @@ export class BreakpointInfo
 		}
 		var count = this.lines.length;
 
-        //返回一个BreakPoint列表
+        //分别对比berakLines中的断点信息和lines中的有效行是否匹配 返回一个BreakPoint列表 
 		var breakpoints = new Array<Breakpoint>();
 		var luaBreakLines = new Array<number>();
 		for (var index = 0; index < berakLines.length; index++) { 

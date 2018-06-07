@@ -126,6 +126,7 @@ export class LuaDebugAdapter extends LoggingDebugSession
         this._luaDebugServer = new LuaDebugServer(this, args);
         this._debugMonitor = new DebugMonitor(this._luaDebugServer,this);
 
+        this.runtimeType = args.runtimeType
         this.localRoot = args.localRoot;
         this.setupProcessHanlders();
         
@@ -166,7 +167,7 @@ export class LuaDebugAdapter extends LoggingDebugSession
 
 
             da.luaStartProc.on('close', function (code) {
-                da.log("close");
+                da.log("da process close");
                 if (da.runtimeLoader.childPid) {
                     try {
                         process.kill(da.runtimeLoader.childPid);
@@ -175,7 +176,7 @@ export class LuaDebugAdapter extends LoggingDebugSession
                         da.log('error..');
                     }
                 }
-                if(da.runtimeType == "LuaTest"){
+                if(da.runtimeType == "standalone"){
                     da.sendEvent(new TerminatedEvent());
                 }
                 
@@ -193,33 +194,34 @@ export class LuaDebugAdapter extends LoggingDebugSession
     {
 
         this.log("setBreakPointsRequest....");
-        // if( this._breakPointData == null)
-        // {
-        //     this._breakPointData = new BreakpointInfo();
-        // }
+        if( this._breakPointData == null)
+        {
+            this._breakPointData = new BreakpointInfo();
+        }
 
-		// var path = args.source.path;
-		// var clientLines = args.lines;
+		var path = args.source.path;
+		var clientLines = args.lines;
 
-        // var breakpoints:DebugProtocol.Breakpoint[] = this._breakPointData.verifiedBreakPoint(path,clientLines);
+        var breakpoints:DebugProtocol.Breakpoint[] = this._breakPointData.verifiedBreakPoint(path,clientLines);
 
-        // var breakInfoStr = "";
-        // breakpoints.forEach(element => {
-        //     breakInfoStr += element.line;
-        // });
+        var breakInfoStr = "";
+        breakpoints.forEach(element => {
+            breakInfoStr += element.line;
+        });
 
-		// response.body = {
-		// 	breakpoints: breakpoints
-        // };
+		response.body = {
+			breakpoints: breakpoints
+        };
         
-        // // if (this._luaDebugServer != null && this._luaDebugServer.connState == EConnState.Connected) {
-		// // 	var data = this._breakPointData.getClientBreakPointInfo(path)
-		// // 	//这里需要做判断 如果 是 断点模式 那么就需要 用mainSocket 进行发送 如果为运行模式就用 breakPointSocket
-        // //     this._luaDebugServer.sendMsg(LuaDebuggerProtocal.S2C_SetBreakPoints, data, 
-        // //         this.isHitBreak == true ? this._luaDebugServer.mainSocket : this._luaDebugServer.breakPointSocket);
-        // // }
+        if (this._luaDebugServer != null && this._luaDebugServer.connState == EConnState.Connected) {
+			var data = this._breakPointData.getClientBreakPointInfo(path)
+			//这里需要做判断 如果 是 断点模式 那么就需要 用mainSocket 进行发送 如果为运行模式就用 breakPointSocket
+            // this._luaDebugServer.sendMsg(LuaDebuggerProtocal.S2C_SetBreakPoints, data, 
+            //     this.isHitBreak == true ? this._luaDebugServer.mainSocket : this._luaDebugServer.breakPointSocket);
+            this._luaDebugServer.sendMsg(LuaDebuggerProtocal.S2C_SetBreakPoints, data, this._luaDebugServer.mainSocket);
+        }
         
-        // this.sendResponse(response);
+        this.sendResponse(response);
         this.log("setBreakPointsResponse....");
         
     }
@@ -251,24 +253,24 @@ export class LuaDebugAdapter extends LoggingDebugSession
         var stackInfos: Array<any> = this._debugMonitor.getStackInfos()
 		const frames = new Array<StackFrame>();
         
-        this.log("111111111111...." + stackInfos.length );
+        //this.log("111111111111...." + stackInfos.length );
 		for (var i = 0; i < stackInfos.length; i++) {
             
             var stacckInfo = stackInfos[i];
-            this.log("111111111111000..");
+            //this.log("111111111111000..");
 			var path: string = stacckInfo.src;
 			if (path == "=[C]") {
                 path = ""
-                this.log("111111111111001..");
+                //this.log("111111111111001..");
 			} else {
 				if (path.indexOf(this._fileSuffix) == -1) {
 					path = path + this._fileSuffix;
                 }
-                this.log("111111111111002.." + path );
+                //this.log("111111111111002.." + path );
 				path = this.convertToServerPath(path)
             }
             
-            this.log("111111111111XXX...." + path);
+            //this.log("111111111111XXX...." + path);
 			var tname = path.substring(path.lastIndexOf("/") + 1)
 			var line = stacckInfo.currentline
 		
@@ -277,14 +279,14 @@ export class LuaDebugAdapter extends LoggingDebugSession
                 line))
         }
         
-        this.log("22222222222222....:::" + frames.length );
+        //this.log("22222222222222....:::" + frames.length );
 
 		response.body = {
 			stackFrames: frames,
 			totalFrames: frames.length
         };
         
-        this.log("3333333333333....");
+        //this.log("3333333333333....");
 
         this.sendResponse(response);
         
@@ -322,9 +324,17 @@ export class LuaDebugAdapter extends LoggingDebugSession
 		}
     }
 
+    //跳过 F5
     protected continueRequest(response: DebugProtocol.ContinueResponse, args: DebugProtocol.ContinueArguments): void
     {
         this.log("continueRequest....");
+        this._debugMonitor.clear()
+		//this.isHitBreak = false
+		this._luaDebugServer.sendMsg(LuaDebuggerProtocal.S2C_RUN,
+			{
+				runTimeType: this.runtimeType,
+			})
+		this.sendResponse(response);
     }
 
     protected reverseContinueRequest(response: DebugProtocol.ReverseContinueResponse, args: DebugProtocol.ReverseContinueArguments) : void 
@@ -332,6 +342,7 @@ export class LuaDebugAdapter extends LoggingDebugSession
         this.log("reverseContinueRequest....");
     }
 
+    //单步跳过 F10
     protected nextRequest(response: DebugProtocol.NextResponse, args: DebugProtocol.NextArguments): void
     {
         this.log("nextRequest....");
@@ -345,7 +356,8 @@ export class LuaDebugAdapter extends LoggingDebugSession
 		// }
 		function callBackFun(isstep, isover) {
 			// luadebug.sendEvent(new OutputEvent("nextRequest 单步跳过"))
-			// luadebug.sendEvent(new OutputEvent("isstep:" + isstep))
+            // luadebug.sendEvent(new OutputEvent("isstep:" + isstep))
+            da.log("单步跳过...." + isstep);
 			if (isstep) {
 				da.sendEvent(new StoppedEvent("step", 1));
 			}
@@ -358,11 +370,35 @@ export class LuaDebugAdapter extends LoggingDebugSession
 		this.sendResponse(response);
     }
 
-    protected stepBackRequest(response: DebugProtocol.StepBackResponse, args: DebugProtocol.StepBackArguments): void
+	/**
+	 * 单步跳入
+	 */
+    protected stepInRequest(response: DebugProtocol.StepInResponse): void 
     {
-        this.log("stepBackRequest....");
+        this.log("stepInRequest....");
+		this._debugMonitor.clear();
+		var da = this;
+		this._debugMonitor.stepReq(function (isstep, isover) {
+                if (isover) {
+                    this.sendEvent(new TerminatedEvent());
+                    return;
+                }
+                if (isstep) {
+                    da.sendEvent(new StoppedEvent("step", 1));
+                }
+            },
+             LuaDebuggerProtocal.S2C_StepInRequest
+        );
+		da.sendResponse(response);
     }
+    
+	protected pauseRequest(response: DebugProtocol.PauseResponse): void {
+		this.sendResponse(response);
+		// this.rubyProcess.Run('pause');
+	}
 
+
+    //取变量值
     protected evaluateRequest(response: DebugProtocol.EvaluateResponse, args: DebugProtocol.EvaluateArguments): void
     {
         this.log("evaluateRequest....");

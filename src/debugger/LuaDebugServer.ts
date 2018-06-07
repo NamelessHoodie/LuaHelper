@@ -134,7 +134,7 @@ export class LuaDebugServer extends EventEmitter
 
             }
 
-            // this.luaDebug.log("server->send Event:" + msg );
+            this._da.log("server->send Event:" + msg );
             currentSocket.write(msg + "\n");
 
         } catch (erro) {
@@ -170,7 +170,7 @@ export class LuaDebugServer extends EventEmitter
                     }
         
                     self._da.log("on data ............");
-                    self._da.log("data:" + data );
+                    //self._da.log("data:" + data );
         
                     var jsonStr:string = self._recvDatas;
                     if(jsonStr) {
@@ -303,7 +303,7 @@ export class LuaDebugServer extends EventEmitter
 
                 //客户端关闭事件
                 socket.on('close', (data)=> {
-                    self._da.log('close: ' + socket.remoteAddress + ' ' + socket.remotePort );
+                    self._da.log('debugerclient close: ');
                 });
 
 
