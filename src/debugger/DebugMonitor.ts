@@ -139,6 +139,7 @@ export class DebugMonitor
 	}
 
 
+	//設置和獲取堆棧信息
     public setStackInfos(stackInfos: Array<any>) {
         this.stackInfos = stackInfos;
     }
@@ -154,7 +155,6 @@ export class DebugMonitor
 	 */
 	public createScopes(frameId: number): Array<Scope> {
 		const scopes = [];
-		this._da.log("frameID:" + frameId);
 		//var stackInfo = this.stackInfos[frameId];
 		//先检查local
 		var localLuaDebugInfo = this.getLocalLuaDebugInfo(frameId);

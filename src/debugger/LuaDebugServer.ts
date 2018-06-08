@@ -134,7 +134,7 @@ export class LuaDebugServer extends EventEmitter
 
             }
 
-            this._da.log("server->send Event:" + msg );
+            this._da.log(">>>>toLuaDB:" + msg );
             currentSocket.write(msg + "\n");
 
         } catch (erro) {
@@ -169,7 +169,7 @@ export class LuaDebugServer extends EventEmitter
                         self._da.log("errordata:\n");
                     }
         
-                    self._da.log("on data ............");
+                    self._da.log("<<<<fromLuaDB");
                     //self._da.log("data:" + data );
         
                     var jsonStr:string = self._recvDatas;
@@ -178,6 +178,9 @@ export class LuaDebugServer extends EventEmitter
                     }
                     //消息分解
                     var datas: string[] = data.split("__debugger_k0204__")
+                    //用来存放原始json消息数据
+                    var rawDatas :any[] = [];
+                    //存放json转对象后数据
                     var jsonDatas:Array<any> = new Array<any>();
                      for (var index = 0; index < datas.length; index++) {
                             var element = datas[index];
@@ -195,6 +198,7 @@ export class LuaDebugServer extends EventEmitter
                         try {
                             var jdata = JSON.parse(element)
                             jsonDatas.push(jdata)
+                            rawDatas.push(element);
                         } catch (error) {
                             jsonDatas = null
                             self._recvDatas = data;
@@ -220,9 +224,10 @@ export class LuaDebugServer extends EventEmitter
                             self._da.isHitBreak = true
                             self.emit("C2S_HITBreakPoint", jdata)
                         } else if (event == LuaDebuggerProtocal.C2S_ReqVar) {
-        
+                            self._da.log("C2S_ReqVar:" + rawDatas[index]);
                             self.emit("C2S_ReqVar", jdata)
                         } else if (event == LuaDebuggerProtocal.C2S_NextResponse) {
+                            self._da.log("C2S_NextResponse");
                              self.emit("C2S_NextResponse", jdata);
                             // if(self.checkStackTopFileIsExist(jdata.data.stack[0])){
                             //     self.emit("C2S_NextResponse", jdata);

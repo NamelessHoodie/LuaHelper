@@ -89,9 +89,9 @@ export class LuaDebugAdapter extends LoggingDebugSession
 
         this.pathMaps = new Map<string, Array<string>>();
 
-        // build and return the capabilities of this debug adapter:
+        //配置DA是否支持一些可选的功能
+        // config the capabilities of this debug adapter
         response.body = response.body || {};
-
         // the adapter implements the configurationDoneRequest.
         response.body.supportsConfigurationDoneRequest = true;
         // make VS Code to use 'evaluate' when hovering over source
@@ -106,19 +106,13 @@ export class LuaDebugAdapter extends LoggingDebugSession
             
     }
 
-
-    protected configurationDoneRequest(response: DebugProtocol.ConfigurationDoneResponse, args: DebugProtocol.ConfigurationDoneArguments): void 
-    {
-		super.configurationDoneRequest(response, args);
-
-		// notify the launchRequest that configuration has finished
-		//this._configurationDone.notify();
-    }
-
-
-
     protected async launchRequest(response: DebugProtocol.LaunchResponse, args: any) 
     {
+
+        if ( args.noDebug === true ) {
+            this.shutdown();
+            return;
+        }
 
         let da = this;
         this.log("launchRequest....");
@@ -187,9 +181,17 @@ export class LuaDebugAdapter extends LoggingDebugSession
 
         this.sendResponse(response);
 	}
+
+
+    protected configurationDoneRequest(response: DebugProtocol.ConfigurationDoneResponse, args: DebugProtocol.ConfigurationDoneArguments): void 
+    {
+		super.configurationDoneRequest(response, args);
+
+		// notify the launchRequest that configuration has finished
+		//this._configurationDone.notify();
+    }
+
     
-
-
     protected setBreakPointsRequest(response: DebugProtocol.SetBreakpointsResponse, args: DebugProtocol.SetBreakpointsArguments): void 
     {
 
@@ -294,7 +296,7 @@ export class LuaDebugAdapter extends LoggingDebugSession
 
     protected scopesRequest(response: DebugProtocol.ScopesResponse, args: DebugProtocol.ScopesArguments): void
     {
-        this.log("scopesRequest....");
+        this.log("scopesRequest.... frameID:" + args.frameId);
 
         const scopes = this._debugMonitor.createScopes(args.frameId)
 		response.body = {

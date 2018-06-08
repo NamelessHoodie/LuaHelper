@@ -1,31 +1,73 @@
+function dumpTableToString( _table , _callnum)
+	if( type(_table) ~= "table" ) then
+		return _table;
+    end
+    
+    --标记递归层级，初始为0
+    local callNum = 0;
+    if( _callnum ) then
+        callNum = _callnum;
+    end
 
-local function func(a,b)
-    local count = 0;
-    repeat 
-        print("1");
-        count = count +1;
-        if( count == 50 ) then
-            print("Bingo");
-            yret = coroutine.yield();
-            print("resume:" .. yret);
+    --返回当前层级缩进信息
+    local printIndentation = function()
+        local str = "";
+        if( callNum ) then
+            for i=1,callNum,1 do
+                str = str .. "    ";
+            end
         end
-    until count>100;
+        return str;
+    end
+
+    local strIndentation = printIndentation();
+
+	local retstr = "[\n";
+	for k,v in pairs(_table) do
+		retstr = retstr .. strIndentation .. tostring(k) .. " = " .. dumpTableToString(v,callNum+1) .. ";\n";
+	end
+
+    retstr = retstr .. strIndentation .. "]";
+    
+    return retstr;
+    
 end
 
-local function coroutineMain()
-    xpcall(func,function(error)
-        print(error);
-    end);
-end
+
+aaa = {src = "1111",scoreName = "2222",funcs = {aaa = 1, bbb = 2,ccc = { kkk = "hello1",kkk2 = "hello2" }}}
+bbb = {"ttt","yyyy","uuu","iii","eee"}
+
+local vvv = dumpTableToString(bbb);
+print(vvv);
 
 
-local aaa = coroutine.create(func);
-coroutine.resume(aaa,1,1);
-print("\nRTRTRTTTTTTTTTTTTT");
-bbb,msg = coroutine.resume(aaa);
-if( not bbb ) then
-    print(msg);
-end
+-- local function func(a,b)
+--     local count = 0;
+--     repeat 
+--         print("1");
+--         count = count +1;
+--         if( count == 50 ) then
+--             print("Bingo");
+--             yret = coroutine.yield();
+--             print("resume:" .. yret);
+--         end
+--     until count>100;
+-- end
+
+-- local function coroutineMain()
+--     xpcall(func,function(error)
+--         print(error);
+--     end);
+-- end
+
+
+-- local aaa = coroutine.create(func);
+-- coroutine.resume(aaa,1,1);
+-- print("\nRTRTRTTTTTTTTTTTTT");
+-- bbb,msg = coroutine.resume(aaa);
+-- if( not bbb ) then
+--     print(msg);
+-- end
 
 
 

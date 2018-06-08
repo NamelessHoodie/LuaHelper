@@ -609,6 +609,42 @@ function debuglog( msg )
 	print1("debug:" .. msg);
 end
 
+function dumpTableToString( _table , _callnum)
+	if( type(_table) ~= "table" ) then
+		return _table;
+    end
+    
+    --标记递归层级，初始为0
+    local callNum = 0;
+    if( _callnum ) then
+        callNum = _callnum;
+    end
+
+    --返回当前层级缩进信息
+    local printIndentation = function()
+        local str = "";
+        if( callNum ) then
+            for i=1,callNum,1 do
+                str = str .. "    ";
+            end
+        end
+        return str;
+    end
+
+    local strIndentation = printIndentation();
+
+	local retstr = "[\n";
+	for k,v in pairs(_table) do
+		retstr = retstr .. strIndentation .. tostring(k) .. " = " .. dumpTableToString(v,callNum+1) .. ";\n";
+	end
+
+    retstr = retstr .. strIndentation .. "]";
+    
+    return retstr;
+    
+end
+
+
 
 function print1(...)
 	if(LuaDebugger.isProntToConsole == 1 or LuaDebugger.isProntToConsole == 3) then
@@ -774,26 +810,28 @@ local function debugger_getvalue(f)
 end
 
 --获取堆栈數據
--- data[
---        stack = [1：[
+-- data{
+--        stack = {1：{
 --                    src         = 
 --                    scoreName   =
 --                    currentline =
 --                    linedefined =
 --                    what        =
 --                    nameWhat    =
---                ]];
---        vars =  [
+--                };
+--        vars =  {
 --                    1:var1;
 --                    2:var2;
---                ]
---        funcs = [
+--                }
+--        funcs = {
 --                    1:func1;
 --                    2:func2;                 
---                ]
+--                }
 --        event = "C2S_HITBreakPoint"
 --        funcsLength = #funcs
---   ]  
+--   }  
+
+
     
 
 debugger_stackInfo = function(ignoreCount, event)
@@ -901,7 +939,7 @@ end
 -- 		...
 -- 	]
 
-
+--设置断点信息
 debugger_setBreak = function(datas)
 	local breakInfos = LuaDebugger.breakInfos
 	for i, data in ipairs(datas) do
@@ -930,7 +968,7 @@ debugger_setBreak = function(datas)
 			breakInfos[data.fileName] = nil
 		end
 	end
-	debugger_dump(breakInfos, "breakInfos", 6)
+	--debugger_dump(breakInfos, "breakInfos", 6)
 	--检查是否需要断点
 	local isHook = false
 	for k, v in pairs(breakInfos) do
@@ -1176,7 +1214,7 @@ local function debugger_loop(server)
 	local eval_env = {}
 	local arg
 	while true do
-		debuglog("recv...");
+		--debuglog("recv...");
 		local line, status = server:receive()
 		if(line) then
 			local netData = json.decode(line)
@@ -1213,9 +1251,10 @@ local function debugger_loop(server)
 				ResetDebugInfo()
 				LuaDebugger.StepNext = true
 				LuaDebugger.StepInLevel = 0
-				debuglog("------------------------------")
 				--设置当前文件名和当前行数
 				local data = coroutine.yield()
+				--local aaa = dumpTableToString(data);
+				debuglog("$$$" );
 				--重置调试信息
 				LuaDebugger.currentDebuggerData = data;
 				debugger_sendMsg(server, data.event, {
@@ -1341,6 +1380,7 @@ debug_hook = function(event, line)
 			coroutine.resume(coro_debugger, data)
 		end
 		if(LuaDebugger.StepNext ) then
+			print1("stepNext:" .. LuaDebugger.StepNextLevel);
 			if( LuaDebugger.StepNextLevel == 0) then
 				local data = debugger_stackInfo(3, LuaDebugger.event.C2S_NextResponse)
 				--挂起等待调试器作出反应
