@@ -69,8 +69,8 @@
                                 "description": "运行时类型",
 								"enum": [
 									"standalone",
-                                    "cocos",
-                                    "unity"
+                                    "attachCocos",
+                                    "attachUnity"
 								]
                             },
                             "host":{
@@ -129,7 +129,16 @@
 						"request": "launch",
                         "stopOnEntry": true,
                         "localRoot":"${workspaceRoot}"
-					}
+                    },
+                    {
+                        "name": "attach(Unity)",
+						"type": "lua",
+						"request": "attach",
+						"runtimeType": "attachUnity",
+						"localRoot": "${workspaceRoot}",
+						"port": 47111
+                    }
+
                 ]  
             }
         ]

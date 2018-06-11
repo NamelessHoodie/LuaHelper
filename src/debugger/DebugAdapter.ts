@@ -104,7 +104,24 @@ export class LuaDebugAdapter extends LoggingDebugSession
             self._luaDebugServer.close();
         });
             
-    }
+	}
+	
+
+	protected attachRequest(response: DebugProtocol.AttachResponse, args: any): void {
+
+		this._luaDebugServer = new LuaDebugServer(this, args);
+		this._debugMonitor = new DebugMonitor(this._luaDebugServer, this)
+		this.localRoot = args.localRoot
+		this.runtimeType = args.runtimeType
+		//this.isProntToConsole = args.printType
+		this.sendEvent(new OutputEvent("正在检索文件目录" + "\n"))
+		this.initPathMaps(args.scripts)
+		this.sendEvent(new OutputEvent("检索文件目录完成" + "\n"))
+		//注册事件
+		this.setupProcessHanlders()
+		this.sendResponse(response);
+	}
+	
 
     protected async launchRequest(response: DebugProtocol.LaunchResponse, args: any) 
     {
@@ -357,9 +374,7 @@ export class LuaDebugAdapter extends LoggingDebugSession
 		// 	this.sendEvent(new OutputEvent("scopesManager_ null"))
 		// }
 		function callBackFun(isstep, isover) {
-			// luadebug.sendEvent(new OutputEvent("nextRequest 单步跳过"))
-            // luadebug.sendEvent(new OutputEvent("isstep:" + isstep))
-            da.log("单步跳过...." + isstep);
+            //da.log("单步跳过...." + isstep);
 			if (isstep) {
 				da.sendEvent(new StoppedEvent("step", 1));
 			}
@@ -370,7 +385,7 @@ export class LuaDebugAdapter extends LoggingDebugSession
 			this.sendEvent(new OutputEvent("nextRequest error:" + error))
 		}
 		this.sendResponse(response);
-    }
+	}
 
 	/**
 	 * 单步跳入
@@ -404,6 +419,54 @@ export class LuaDebugAdapter extends LoggingDebugSession
     protected evaluateRequest(response: DebugProtocol.EvaluateResponse, args: DebugProtocol.EvaluateArguments): void
     {
         this.log("evaluateRequest....");
+        var da: LuaDebugAdapter = this;
+		var frameId = args.frameId;
+		if (frameId == null) {
+			frameId = 0;
+		}
+		var expression = args.expression;
+		var eindex = expression.lastIndexOf("..")
+		if (eindex > -1) {
+			expression = expression.substring(eindex + 2)
+		}
+		eindex = expression.lastIndexOf('"')
+		if (eindex == 0) {
+			var body = {
+				result: expression + '"',
+				variablesReference: 0
+			}
+			response.body = body
+			da.sendResponse(response);
+			return
+		}
+		if (args.context == "repl" && args.expression == ">load") {
+			// this.luaProcess.runLuaScript({ luastr: getLoadLuaScript(), frameId: args.frameId }, function (body) {
+			// 	response.body = body
+			// 	da.sendResponse(response);
+			// })
+			return
+		}
+		var index: number = 1
+		var scopesManager = this._debugMonitor;
+		var callBackFun = function (body) {
+			if (body == null) {
+				index++;
+				if (index > 3) {
+					response.body =
+						{
+							result: "nil",
+							variablesReference: 0
+						}
+					da.sendResponse(response);
+				} else {
+					scopesManager.evaluateRequest(frameId, expression, index, callBackFun, args.context)
+				}
+			} else {
+				response.body = body;
+				da.sendResponse(response);
+			}
+		}
+		this._debugMonitor.evaluateRequest(frameId, expression, index, callBackFun, args.context)
     }
 
     public convertToServerPath(path: string): string {
@@ -413,21 +476,18 @@ export class LuaDebugAdapter extends LoggingDebugSession
 		path = path.replace(/\\/g, "/");
         path = path.replace(new RegExp("/./", "gm"), "/");
         
-        this.log("33333333");
 		var nindex: number = path.lastIndexOf("/");
 		var fileName: string = path.substring(nindex + 1);
 
 		fileName = fileName.substr(0,fileName.length - 4) + this._fileSuffix;
 		path = path.substr(0,path.length - 4)  + this._fileSuffix;
 
-        this.log("444444444444:" + path);
         var paths: Array<string> = this.pathMaps.get(fileName);
 		if (!paths) {
 			return path;
 		}
 		var clientPaths = path.split("/");
 
-        this.log("555555555555" + paths);
 		var isHit: boolean = true;
 		var hitServerPath = "";
 		var pathHitCount: Array<number> = new Array<number>();
@@ -451,7 +511,6 @@ export class LuaDebugAdapter extends LoggingDebugSession
 			}
 		}
 		//判断谁的命中多 
-        this.log("666666666666");
 
 		var maxCount = 0;
 		var hitIndex = -1;

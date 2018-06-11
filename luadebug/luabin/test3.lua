@@ -1,6 +1,10 @@
+--Description: 将table数据转为string用于打印
+--Params: 
+--Return: 
+--Last Modify: Zahidle.PF
 function dumpTableToString( _table , _callnum)
 	if( type(_table) ~= "table" ) then
-		return _table;
+        return tostring(_table);
     end
     
     --标记递归层级，初始为0
@@ -23,8 +27,10 @@ function dumpTableToString( _table , _callnum)
     local strIndentation = printIndentation();
 
 	local retstr = "[\n";
-	for k,v in pairs(_table) do
-		retstr = retstr .. strIndentation .. tostring(k) .. " = " .. dumpTableToString(v,callNum+1) .. ";\n";
+    for k,v in pairs(_table) do
+        print("--" .. tostring(k) .. ":" .. tostring(v));
+        local val = dumpTableToString(v,callNum+1);
+		retstr = retstr .. strIndentation .. tostring(k) .. " = " .. val .. ";\n";
 	end
 
     retstr = retstr .. strIndentation .. "]";
@@ -37,8 +43,10 @@ end
 aaa = {src = "1111",scoreName = "2222",funcs = {aaa = 1, bbb = 2,ccc = { kkk = "hello1",kkk2 = "hello2" }}}
 bbb = {"ttt","yyyy","uuu","iii","eee"}
 
-local vvv = dumpTableToString(bbb);
-print(vvv);
+local ccc = debug.getinfo(1);
+ccc = dumpTableToString(ccc);
+--local vvv = dumpTableToString(bbb);
+print(ccc);
 
 
 -- local function func(a,b)

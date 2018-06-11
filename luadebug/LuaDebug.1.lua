@@ -981,9 +981,9 @@ debugger_setBreak = function(datas)
 			debug.sethook(debug_hook, "lrc")
 		end
 		LuaDebugger.isHook = true
-		--print("isHook=>true")
+		print("isHook=>true")
 	else
-		--print("isHook=>false")
+		print("isHook=>false")
 		if(LuaDebugger.isHook) then
 			debug.sethook()
 		end
@@ -1204,7 +1204,7 @@ local function ResetDebugInfo()
 	LuaDebugger.StepNext = false
 	LuaDebugger.StepOut = false
 	LuaDebugger.StepNextLevel = 0
-	--debuglog("ResetDebugResetDebugResetDebugResetDebug")
+	debuglog("ResetDebugResetDebugResetDebugResetDebug")
 end
 local function debugger_loop(server)
 	debuglog("debugger_loop start..........");
@@ -1214,13 +1214,14 @@ local function debugger_loop(server)
 	local eval_env = {}
 	local arg
 	while true do
-		--debuglog("recv...");
+		debuglog("recv...");
 		local line, status = server:receive()
 		if(line) then
 			local netData = json.decode(line)
 			local event = netData.event;
 			local body = netData.data;
 			if event == LuaDebugger.event.S2C_SetBreakPoints then
+				debuglog("-->S2C_SetBreakPoints")
 				--设置断点信息
 				local function setB()
 					debugger_setBreak(body)
@@ -1235,9 +1236,9 @@ local function debugger_loop(server)
 				--LuaDebugger.isProntToConsole = body.isProntToConsole
 				ResetDebugInfo()
 				LuaDebugger.Run = true
-				--debuglog("停止S2C_RUN" );
+				debuglog("停止S2C_RUN" );
 				local data = coroutine.yield()
-				--debuglog("继续S2C_RUN" );
+				debuglog("继续S2C_RUN" );
 				LuaDebugger.currentDebuggerData = data;
 
 				debugger_sendMsg(server, data.event, {
@@ -1252,10 +1253,10 @@ local function debugger_loop(server)
 				LuaDebugger.StepNext = true
 				LuaDebugger.StepInLevel = 0
 				--设置当前文件名和当前行数
-				--debuglog("停止S2C_NextRequest" );
+				debuglog("停止S2C_NextRequest" );
 				local data = coroutine.yield()
 				--local aaa = dumpTableToString(data);
-				--debuglog("继续S2C_NextRequest" );
+				debuglog("继续S2C_NextRequest" );
 				--重置调试信息
 				LuaDebugger.currentDebuggerData = data;
 				debugger_sendMsg(server, data.event, {
@@ -1265,9 +1266,9 @@ local function debugger_loop(server)
 				--单步跳入
 				ResetDebugInfo()
 				LuaDebugger.StepIn = true
-				--debuglog("停止S2C_StepInRequest" );
+				debuglog("停止S2C_StepInRequest" );
 				local data = coroutine.yield()
-				--debuglog("继续S2C_StepInRequest" );
+				debuglog("继续S2C_StepInRequest" );
 				--重置调试信息
 				LuaDebugger.currentDebuggerData = data;
 				debugger_sendMsg(server, data.event, {
@@ -1278,9 +1279,9 @@ local function debugger_loop(server)
 				--单步跳出
 				ResetDebugInfo()
 				LuaDebugger.StepOut = true
-				--debuglog("停止S2C_StepOutRequest" );
+				debuglog("停止S2C_StepOutRequest" );
 				local data = coroutine.yield()
-				--debuglog("继续S2C_StepOutRequest" );
+				debuglog("继续S2C_StepOutRequest" );
 				--重置调试信息
 				LuaDebugger.currentDebuggerData = data;
 				debugger_sendMsg(server, data.event, {
@@ -1361,17 +1362,17 @@ debug_hook = function(event, line)
 		local stepInfo = getinfo(2,"nS")
 		local source = stepInfo.source
 
-		--print1("call...................." .. tostring(stepInfo.name));
+		print1("call...................." .. tostring(stepInfo.name));
 		if(source:find(LuaDebugger.DebugLuaFie) or source == "=[C]") then
 			return
 		end
 		
 		file = getSource(source);
 		LuaDebugger.currentFileName = file
-		--print1("callfile:" .. file .. " stepNext：" .. LuaDebugger.StepNextLevel);
+		print1("callfile:" .. file .. " stepNext：" .. LuaDebugger.StepNextLevel);
 		-- end
 	elseif(event == "return" or event == "tail return") then
-		--print1( event .. "...........");
+		print1( event .. "...........");
 		-- if(not LuaDebugger.StepOut) then
 		if(LuaDebugger.StepNext) then
 			LuaDebugger.StepNextLevel = LuaDebugger.StepNextLevel-1
@@ -1381,7 +1382,7 @@ debug_hook = function(event, line)
 		
 		-- end
 	elseif(event == "line") then
-		--print1("line.............................");
+		print1("line.............................");
 		if(LuaDebugger.StepIn) then
 			local data = debugger_stackInfo(3, LuaDebugger.event.C2S_NextResponse)
 			--挂起等待调试器作出反应
@@ -1389,7 +1390,7 @@ debug_hook = function(event, line)
 			coroutine.resume(coro_debugger, data)
 		end
 		if(LuaDebugger.StepNext ) then
-			--print1("stepNext:" .. LuaDebugger.StepNextLevel);
+			print1("stepNext:" .. LuaDebugger.StepNextLevel);
 			if( LuaDebugger.StepNextLevel == 0) then
 				local data = debugger_stackInfo(3, LuaDebugger.event.C2S_NextResponse)
 				--挂起等待调试器作出反应
@@ -1504,16 +1505,17 @@ local function start()
 				name = "mainSocket"
 			})
 			xpcall(function()
+				print1("SetHook...");
 				debug.sethook(debug_hook, "lrc")
 			end, function(error)
 				print("error:", error)
 			end)
-			debuglog("sethook and debuger starting.....");
+			print1("first start.....");
 			local cortRet,errMsg = coroutine.resume(coro_debugger, server)
 			if( not cortRet ) then
-				debuglog("coroutine excption......:" .. errMsg);
+				print("coroutine excption......:" .. errMsg);
 			else
-				--debuglog("coroutine end......");
+				print("coroutine end......");
 			end
 
 			
@@ -1540,7 +1542,7 @@ function StartDebug(host, port)
 		-- body
 		print(error)
 	end)
-
+	print("StartDebugEnd");
 	return debugger_receiveDebugBreakInfo, debugger_xpcall
 end
 
