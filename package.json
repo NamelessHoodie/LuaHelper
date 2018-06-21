@@ -68,53 +68,50 @@
                                 "default": "standalone",
                                 "description": "运行时类型",
 								"enum": [
-									"standalone",
-                                    "attachCocos",
-                                    "attachUnity"
+									"standalone"
 								]
                             },
                             "host":{
                                 "type":"string",
-                                "description": "调试器的地址(仅Lua51 内置有效)",
+                                "description": "调试器的地址",
 								"default": "localhost"
                             },
                             "port": {
 								"type": "number",
 								"description": "调试器的端口",
-								"default": 7003
+								"default": 47111
                             },
-                            "mainFile": {
-								"type": "string",
-								"description": "--选填 启动的lua 文件名 运行程序支持 workdir 当做 file 进行传入",
-								"default": "${file}"
-							},
 							"localRoot": {
+								"type": "string",
+								"description": "工作区根目录",
+								"default": "${workspaceRoot}"
+							}
+                        }
+
+                    },
+                    "attach":{
+                        "required":[
+                            "runtimeType",
+                            "localRoot",
+                            "post"
+                        ],"properties":{
+                            "runtimeType":{
+                                "type": "string",
+                                "default": "attachUnity",
+                                "description": "运行时类型",
+								"enum": [
+									"attachUnity"
+                                ]
+                            },
+                            "port": {
+								"type": "number",
+								"description": "调试器的端口",
+								"default": 47111
+                            },							
+                            "localRoot": {
 								"type": "string",
 								"description": "--必填 当前文件目录 如果 运行程序支持 workdir 该参数当做 workdir进行传入",
 								"default": "${workspaceRoot}"
-							},
-							"scripts": {
-								"type": "array",
-								"default": [],
-								"description": "--必填 源文件目录(package.path 中的路径对应的本地路径)",
-								"items": {
-									"type": "string"
-								}
-							},
-							"exePath": {
-								"type": "string",
-								"description": "--必填 执行文件路径",
-								"default": ""
-							},
-							"printType": {
-								"type": "number",
-								"default": 1,
-								"description": "--必填 print打印方式 1 控制台和系统输出,2 控制台输出,3 系统输出",
-								"enum": [
-									1,
-									2,
-									3
-								]
 							}
                         }
 
@@ -122,7 +119,7 @@
                 },
                 "initialConfigurations": [
 					{
-                        "name": "launch-alone",
+                        "name": "launch-alone-lua51",
                         "type": "lua",
                         "port": 47111,
 						"runtimeType": "standalone",
@@ -132,7 +129,6 @@
                     },
                     {
                         "name": "attach(Unity)",
-						"type": "lua",
 						"request": "attach",
 						"runtimeType": "attachUnity",
 						"localRoot": "${workspaceRoot}",

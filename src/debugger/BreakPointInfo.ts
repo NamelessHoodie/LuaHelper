@@ -7,14 +7,46 @@ import { readFileSync } from 'fs';
 
 
 /**
- * 断点数据结构
+ * 断点信息
  */
-export class BreakpointInfo
+export class BpInfo
 {
+	//断点所在文件名
+	public fileName: string;
+	//被调试段文件路径
+	public serverPath: string;
+	//断点行数
+	public lines:  Array<number>;
+
+	constructor( path: string, lines: Array<number>)
+	{
+		this.fileName =  this._getPathFileName(path);
+		this.serverPath = path;
+		this.lines = lines;
+	}
+
+	    /**
+     * 从路径中获取文件名
+     */
+    _getPathFileName( path : string) :string
+    {
+        path = path.replace(/\\/g, "/");
+        let nindex: number = path.lastIndexOf("/");
+        let fileName: string = path.substring(nindex + 1);
+        return fileName;
+    }
+}
+
+
+
+/**
+ * 断点检查器，拥有所有断点信息
+ */
+export class BreakpointChecker
+{
+	private _breakPoints = new Map<string, Array<number>>();    // 文件名 <---> 文件中所有断点行数列表
     private currentText: string;
 	private vindex: number;
-	private _breakPoints = new Map<string, Array<number>>();    // 文件名 <---> 文件中所有断点行数列表
-	private _breakpointId = 111000;
 	private length: number;
 	private line: number;
 	private isAddLine: boolean;
@@ -22,6 +54,20 @@ export class BreakpointInfo
 	private lineContent: string = "";
     private da: LuaDebugAdapter;
     
+	/**
+	 * 获取所有文件的断点信息
+	 */
+    public getAllClientBreakPointInfo() {
+		var data = []
+
+		this._breakPoints.forEach((v, k) => {
+				
+			let strPath: string = k;
+			let bpInfo :BpInfo = new BpInfo(strPath,v);
+			data.push(bpInfo);
+		});
+		return data;
+	}
 
 
     /**
@@ -39,9 +85,10 @@ export class BreakpointInfo
 		if (this._breakPoints.has(path)) {
 
 			var breakPoints = this._breakPoints.get(path);
-			var pathinfo = this._convertToClientPath(path,breakPoints)
+
+			let bpInfo :BpInfo = new BpInfo(path,breakPoints);
 			
-			return [pathinfo];
+			return [bpInfo];
 		}
 		return null;
 	}
@@ -63,7 +110,7 @@ export class BreakpointInfo
 			var charCode = this.currentText.charCodeAt(this.vindex);
 			var next = this.currentText.charCodeAt(this.vindex + 1);
 			if (charCode == 45 && next == 45) {
-				//获取评论
+				//略过评论
 				this.skipComment();
 				this._skipWhiteSpace();
 			} else {
@@ -107,7 +154,6 @@ export class BreakpointInfo
 					const bp:DebugProtocol.Breakpoint = new Breakpoint(true, fline);
 					luabreakLines.push(fline);
 					breakpoints.push(bp);
-					bp.id = ++this._breakpointId;
 					bp.verified = true;
 
 				}
@@ -284,48 +330,6 @@ export class BreakpointInfo
 	}
 
 
-
-    public getAllClientBreakPointInfo() {
-		var data = []
-
-		this._breakPoints.forEach((v, k) => {
-				
-			var strPath: string = k;
-			//进行替换 将本地path 替换为远程
-			var pathinfo = this._convertToClientPath(strPath,v);
-			data.push(pathinfo);
-		});
-		return data;
-    }
-
-    public _convertToClientPath(path: string, lines: Array<number>): any {
-		path = path.replace(/\\/g, "/");
-		var nindex: number = path.lastIndexOf("/");
-		var fileName: string = path.substring(nindex + 1);
-		var extname = Path.extname(path);
-		var baseName = Path.basename(path);
-		fileName = fileName.substr(0,fileName.length - extname.length) + ".lua";
-		path = path.substr(0,path.length - extname.length) + ".lua";
-		var pathinfo = {
-			fileName: fileName,
-			serverPath: path,
-			lines: lines
-		}
-		return pathinfo;
-		//检查文件是否存在如果存在那么就
-		// var paths: Array<string> = new Array<string>();
-		// var clientPath: string = ""
-		// for (var index = 0; index < this.scriptPaths.length; index++) {
-		// 	var serverPath: string = this.scriptPaths[index];
-		// 	if (path.indexOf(serverPath) > -1) {
-		// 		clientPath = path.replace(serverPath, "")
-		// 		paths.push(clientPath)
-		// 	}
-		// }
-		// return paths;
-    }
-    
-
-    
     
 }
+

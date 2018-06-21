@@ -74,6 +74,8 @@ export class Utils
         return str;
     }
 
+
+
     static GetFileNameFromUri( _uri:vscode.Uri):string
     {
         let strRet = Utils.FormatPath(_uri.path);

@@ -22,7 +22,7 @@ export class RuntimeLoader
         let localRoots: string[] = [];
 
 
-        this.da.log('...........localRoot:' + args.localRoot );
+        this.da.dalog('...........localRoot:' + args.localRoot );
         //是否有指定的lua工程目录
         if (args.localRoot) {
             localRoots.push((path.normalize(args.localRoot)).replace(/\\/g, "/"));
@@ -41,14 +41,14 @@ export class RuntimeLoader
             var debuggerPath =  path.join(fileInfos[0],"luadebug")
             debuggerPath = debuggerPath.replace(/\\/g, "/");
 
-            this.da.log('debugPath:' + fileName);
+            this.da.dalog('debugPath:' + fileName);
             var luaScript = "package.path = package.path .. ';" + debuggerPath + "/?.lua;"+debuggerPath + "/luabin;"// + targetWorkspace + ";'\n"
             for (let index = 0; index < localRoots.length; index++) {
                 const element = localRoots[index];
                 luaScript += element + "/?.lua;'" 
             }
 
-            luaScript += "require('LuaDebug')('localhost',"+ args.port +")"
+            luaScript += "require('LuaDebug2')('localhost',"+ args.port +")"
             luaScript += "require('"+ args.mainFile +"')";
             
             options = {
@@ -56,17 +56,14 @@ export class RuntimeLoader
                 shell: true
             };
 
-            this.da.log('lua starter:' + luaScript);
+            this.da.dalog('lua starter:' + luaScript);
             
             let exePath = debuggerPath + '/luabin/lua.exe -e "' +luaScript + '"';
             luaStartProc = child_process.execFile(exePath, options,(error:Error,stdout,stderr)=>{
             //luaStartProc = child_process.exec(exePath, options,(error:Error,stdout,stderr)=>{
                 if ( error ) {
-                    this.da.log('lua exec has a error');
+                    this.da.dalog('lua exec has a error');
                 } 
-
-                //this.da.log('stdout>>:' + stdout);
-                // this.da.log('stderr>>:' + stderr);
 
             });
             //luaStartProc = child_process.exec('lua -e "'+luaScript + '"')

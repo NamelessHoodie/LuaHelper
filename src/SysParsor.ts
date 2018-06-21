@@ -105,7 +105,7 @@ export class SysParsor implements System
                                 {
     
                                     //用于断点某个指定文档
-                                    if (_uri.path.search("Panel_UserInfo")!= -1) {
+                                    if (_uri.path.search("LuaDebug")!= -1) {
                                         //Bingo
                                         console.log("Bingo");
                                     }
@@ -191,7 +191,10 @@ export class SysParsor implements System
                 scope:true,
                 onCreateNode:(node)=>{
 
+                    
                     this.currentParseLine = node.loc.start.line-1;
+                    var templineTex = this.currentDoc.doc.lineAt(node.loc.start.line-1);
+                    SysLogger.getSingleton().log("current line:" + this.currentParseLine +  "type:"  + node.type + "Content:" + templineTex.text);
 
                     if(this.isNewScope)
                     {
@@ -267,6 +270,9 @@ export class SysParsor implements System
                     {
                         SysLogger.getSingleton().log("解析出错:" + excp + "|" + node.loc.start.line);
                     }
+
+                    //缓存每次解析的node的type用于下一个node判断需要依赖前一个node类型时使用
+                    this._lastParseNodeType = node.type;
                     
     
                 },
@@ -291,6 +297,8 @@ export class SysParsor implements System
                     newScopeAst.startline = this.currentParseLine;
                     this.scopeAstStack.push(newScopeAst);
                     this.currentScopeAst = newScopeAst;
+
+                    SysLogger.getSingleton().log("New scope Index:" + newScopeAst.scopeIndex);
 
                 },
                 onDestroyScope : ()=>{
@@ -325,6 +333,7 @@ export class SysParsor implements System
 
     private _reset()
     {
+        this.currentParseLine = 0;
         this.currentDocAst = null;
         this.currentScope = null;
         this.currentScopeAst = null;
@@ -333,6 +342,11 @@ export class SysParsor implements System
         this.diagnostics = new Array<vscode.Diagnostic>();
         this.moduleChecker = new ModuleChecker();
     }
+
+    //缓存table的定义Items
+    _tempTableItemsMap : Map<string,LuaSyntaxItem> = null;
+    //缓存每次解析的node的type用于下一个node判断需要依赖前一个node类型时使用
+    _lastParseNodeType : string = null;
 
     /**
      * luaParse onCreateNode事件调用
@@ -363,6 +377,23 @@ export class SysParsor implements System
 
         switch(node.type)
         {
+            //表定义式判断{x=?,y=?} 两种方式取一
+            case 'TableConstructorExpression':
+                //TableConstructorExpression的识别在赋值之前，先暂存
+                this._tempTableItemsMap = new Map<string,LuaSyntaxItem>();
+
+                for (let index = 0; index < node.fields.length; index++) {
+                    const element = node.fields[index];
+                    if ( element.type == 'TableKeyString') {
+                        if(element.key.type == 'Identifier'){
+                            var tempItem = new LuaSyntaxItem(ELuaSyntaxItemType.Variable,element.key,null,this.currentDoc);
+                            this._tempTableItemsMap.set(element.key.name,tempItem);
+                        }
+                    }
+                    
+                }
+                break;
+            //赋值式判断
             case 'AssignmentStatement':
 
                 var variable = node.variables[0];
@@ -452,28 +483,34 @@ export class SysParsor implements System
 
                 break;
             case 'LocalStatement':
-                variable = node.variables[0];
-
+                variable = node.variables[0];  
+                let localTempItem = null;
                 if(variable.type == 'Identifier')
                 {
 
-                    var tempItem = new LuaSyntaxItem(ELuaSyntaxItemType.Variable,node,null,this.currentDoc);
+                    localTempItem = new LuaSyntaxItem(ELuaSyntaxItemType.Variable,node,null,this.currentDoc);
                     if(!ps.currentScopeAst.localItems.has(variable.name))
                     {
-                        ps.currentScopeAst.localItems.set(variable.name,tempItem);   
+                        ps.currentScopeAst.localItems.set(variable.name,localTempItem);   
                     }
 
                     //简单赋值关联，只关联非MemberExpression类型
                     if(node.init.length>0)
                     {
-                        tempItem.valueItem = ps.getAssignmentValueItem(ps,node.init[0]);
+                        localTempItem.valueItem = ps.getAssignmentValueItem(ps,node.init[0]);
                     }
-                    
-                    
+
+                  
                 }else if(variable.type == 'MemberExpression')
                 {
                     //递归判断多层嵌套定义
-                    ps._checkMemberExpressionLocal(variable,ps,null)
+                    localTempItem = ps._checkMemberExpressionLocal(variable,ps,null);
+
+                }
+
+                //当前一个node是TableConstructorExpression表示这个是表格定义
+                if ( this._lastParseNodeType == 'TableConstructorExpression' ) {
+                    localTempItem.children = this._tempTableItemsMap;
                 }
 
                 break;
@@ -688,6 +725,8 @@ export class SysParsor implements System
             {
                 rootItem.set(node.base.name,tempItem);
             }
+
+            return tempItem;
                  
         }else if(node.base.type == 'MemberExpression')
         {

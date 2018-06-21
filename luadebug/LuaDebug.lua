@@ -601,7 +601,7 @@ LuaDebugger.event = {
 --Return: 
 --Last Modify: Zahidle.PF
 function print( msg )
-	print1(">>>" .. msg);
+	print1(msg);
 end
 
 
@@ -1416,6 +1416,7 @@ debug_hook = function(event, line)
 		--判断断点
 		local breakInfo = LuaDebugger.breakInfos[file]
 		if(breakInfo) then
+			print(">>>有断点信息...")
 			local ischeck = false
 			for k, lineInfo in pairs(breakInfo) do
 				local lines = lineInfo.lines

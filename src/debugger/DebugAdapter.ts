@@ -1,7 +1,7 @@
 import { DebugProtocol } from 'vscode-debugprotocol';
 import { DebugSession, LoggingDebugSession , InitializedEvent,TerminatedEvent,
          StoppedEvent, BreakpointEvent, OutputEvent,Thread, StackFrame, Scope, Source, Handles, Breakpoint} from 'vscode-debugadapter';
-import { BreakpointInfo } from './BreakPointInfo';
+import { BreakpointChecker } from './BreakPointInfo';
 import { LuaDebugServer , EConnState,LuaDebuggerProtocal } from './LuaDebugServer';
 import * as child_process from 'child_process';
 import { RuntimeLoader } from './RuntimeLoader';
@@ -14,10 +14,9 @@ export class LuaDebugAdapter extends LoggingDebugSession
 {
     
     public isHitBreak: boolean = false
-    _breakPointData:BreakpointInfo;
+    _bpChecker:BreakpointChecker;
     _luaDebugServer:LuaDebugServer;
     _debugMonitor:DebugMonitor;
-    isPrintToConsole:number;
     runtimeType:string;
     luaStartProc:child_process.ChildProcess;
     runtimeLoader : RuntimeLoader;
@@ -27,9 +26,9 @@ export class LuaDebugAdapter extends LoggingDebugSession
 
 
 
-    get breakPointData()
+    get gpChecker()
     {
-        return this._breakPointData;
+        return this._bpChecker;
     }
 
     constructor()
@@ -41,6 +40,11 @@ export class LuaDebugAdapter extends LoggingDebugSession
 
     }
 
+
+	public dalog( msg:string )
+	{
+		//this.sendEvent(new OutputEvent("DA:" + msg + "\n"));
+	}
 
     public log( msg:string )
     {
@@ -85,7 +89,7 @@ export class LuaDebugAdapter extends LoggingDebugSession
                             args: DebugProtocol.InitializeRequestArguments): void 
     {
 
-        this.log("initializeRequest....");
+        this.dalog("initializeRequest....");
 
         this.pathMaps = new Map<string, Array<string>>();
 
@@ -109,6 +113,7 @@ export class LuaDebugAdapter extends LoggingDebugSession
 
 	protected attachRequest(response: DebugProtocol.AttachResponse, args: any): void {
 
+		this.dalog("attachRequest....");
 		this._luaDebugServer = new LuaDebugServer(this, args);
 		this._debugMonitor = new DebugMonitor(this._luaDebugServer, this)
 		this.localRoot = args.localRoot
@@ -132,7 +137,7 @@ export class LuaDebugAdapter extends LoggingDebugSession
         }
 
         let da = this;
-        this.log("launchRequest....");
+        this.dalog("launchRequest....");
 
         this._luaDebugServer = new LuaDebugServer(this, args);
         this._debugMonitor = new DebugMonitor(this._luaDebugServer,this);
@@ -144,8 +149,8 @@ export class LuaDebugAdapter extends LoggingDebugSession
 
         this._luaDebugServer.on('ListenerReady', result => {
 
-            da.log("ListenerReady....");
-            da.log("loadRuntime....");
+            da.dalog("ListenerReady....");
+            da.dalog("loadRuntime....");
             
             //launch lua runtime
             if (da.luaStartProc) {
@@ -156,14 +161,14 @@ export class LuaDebugAdapter extends LoggingDebugSession
             da.luaStartProc = da.runtimeLoader.loadRuntime(args);
             
             da.luaStartProc.on('error', error => {
-                da.log("error:" + error.message);
+                da.dalog("error:" + error.message);
             });
             
             da.luaStartProc.stderr.setEncoding('utf8');
             da.luaStartProc.stderr.on('data', error => {
                 if (typeof(error) == 'string' ) {
-                    da.log("stderr:-------------------------------------------");
-                    da.log( error );
+                    da.dalog("stderr:-------------------------------------------");
+                    da.dalog( error );
                 }
             });
 
@@ -171,20 +176,20 @@ export class LuaDebugAdapter extends LoggingDebugSession
             da.luaStartProc.stdout.setEncoding('utf8');
             da.luaStartProc.stdout.on('data', data => {
                 if (typeof(data) == 'string' ) {
-                    da.log("stdout:-------------------------------------------");
-                    da.log( data );
+                    da.dalog("stdout:-------------------------------------------");
+                    da.dalog( data );
                 }
             });
 
 
             da.luaStartProc.on('close', function (code) {
-                da.log("da process close");
+                da.dalog("da process close");
                 if (da.runtimeLoader.childPid) {
                     try {
                         process.kill(da.runtimeLoader.childPid);
                     }
                     catch (e) {
-                        da.log('error..');
+                        da.dalog('error..');
                     }
                 }
                 if(da.runtimeType == "standalone"){
@@ -212,16 +217,16 @@ export class LuaDebugAdapter extends LoggingDebugSession
     protected setBreakPointsRequest(response: DebugProtocol.SetBreakpointsResponse, args: DebugProtocol.SetBreakpointsArguments): void 
     {
 
-        this.log("setBreakPointsRequest....");
-        if( this._breakPointData == null)
+        this.dalog("setBreakPointsRequest....");
+        if( this._bpChecker == null)
         {
-            this._breakPointData = new BreakpointInfo();
+            this._bpChecker = new BreakpointChecker();
         }
 
 		var path = args.source.path;
 		var clientLines = args.lines;
 
-        var breakpoints:DebugProtocol.Breakpoint[] = this._breakPointData.verifiedBreakPoint(path,clientLines);
+        var breakpoints:DebugProtocol.Breakpoint[] = this._bpChecker.verifiedBreakPoint(path,clientLines);
 
         var breakInfoStr = "";
         breakpoints.forEach(element => {
@@ -233,7 +238,7 @@ export class LuaDebugAdapter extends LoggingDebugSession
         };
         
         if (this._luaDebugServer != null && this._luaDebugServer.connState == EConnState.Connected) {
-			var data = this._breakPointData.getClientBreakPointInfo(path)
+			var data = this._bpChecker.getClientBreakPointInfo(path)
 			//这里需要做判断 如果 是 断点模式 那么就需要 用mainSocket 进行发送 如果为运行模式就用 breakPointSocket
             // this._luaDebugServer.sendMsg(LuaDebuggerProtocal.S2C_SetBreakPoints, data, 
             //     this.isHitBreak == true ? this._luaDebugServer.mainSocket : this._luaDebugServer.breakPointSocket);
@@ -241,7 +246,7 @@ export class LuaDebugAdapter extends LoggingDebugSession
         }
         
         this.sendResponse(response);
-        this.log("setBreakPointsResponse....");
+        this.dalog("setBreakPointsResponse....");
         
     }
 
@@ -267,29 +272,29 @@ export class LuaDebugAdapter extends LoggingDebugSession
 
     protected stackTraceRequest(response: DebugProtocol.StackTraceResponse, args: DebugProtocol.StackTraceArguments): void
     {
-        this.log("stackTraceRequest....");
+        this.dalog("stackTraceRequest....");
 
         var stackInfos: Array<any> = this._debugMonitor.getStackInfos()
 		const frames = new Array<StackFrame>();
         
-        //this.log("111111111111...." + stackInfos.length );
+
 		for (var i = 0; i < stackInfos.length; i++) {
             
             var stacckInfo = stackInfos[i];
-            //this.log("111111111111000..");
+
 			var path: string = stacckInfo.src;
 			if (path == "=[C]") {
                 path = ""
-                //this.log("111111111111001..");
+
 			} else {
 				if (path.indexOf(this._fileSuffix) == -1) {
 					path = path + this._fileSuffix;
                 }
-                //this.log("111111111111002.." + path );
+
 				path = this.convertToServerPath(path)
             }
             
-            //this.log("111111111111XXX...." + path);
+
 			var tname = path.substring(path.lastIndexOf("/") + 1)
 			var line = stacckInfo.currentline
 		
@@ -298,14 +303,14 @@ export class LuaDebugAdapter extends LoggingDebugSession
                 line))
         }
         
-        //this.log("22222222222222....:::" + frames.length );
+
 
 		response.body = {
 			stackFrames: frames,
 			totalFrames: frames.length
         };
         
-        //this.log("3333333333333....");
+
 
         this.sendResponse(response);
         
@@ -313,7 +318,7 @@ export class LuaDebugAdapter extends LoggingDebugSession
 
     protected scopesRequest(response: DebugProtocol.ScopesResponse, args: DebugProtocol.ScopesArguments): void
     {
-        this.log("scopesRequest.... frameID:" + args.frameId);
+        this.dalog("scopesRequest.... frameID:" + args.frameId);
 
         const scopes = this._debugMonitor.createScopes(args.frameId)
 		response.body = {
@@ -325,7 +330,7 @@ export class LuaDebugAdapter extends LoggingDebugSession
 
     protected variablesRequest(response: DebugProtocol.VariablesResponse, args: DebugProtocol.VariablesArguments): void
     {
-        this.log("variablesRequest....");
+        this.dalog("variablesRequest....");
 
         var da: LuaDebugAdapter = this;
 		var luaDebugVarInfo: LuaDebugVarInfo = this._debugMonitor.getDebugVarsInfoByVariablesReference(args.variablesReference)
@@ -346,7 +351,7 @@ export class LuaDebugAdapter extends LoggingDebugSession
     //跳过 F5
     protected continueRequest(response: DebugProtocol.ContinueResponse, args: DebugProtocol.ContinueArguments): void
     {
-        this.log("continueRequest....");
+        this.dalog("continueRequest....");
         this._debugMonitor.clear()
 		//this.isHitBreak = false
 		this._luaDebugServer.sendMsg(LuaDebuggerProtocal.S2C_RUN,
@@ -358,13 +363,13 @@ export class LuaDebugAdapter extends LoggingDebugSession
 
     protected reverseContinueRequest(response: DebugProtocol.ReverseContinueResponse, args: DebugProtocol.ReverseContinueArguments) : void 
     {
-        this.log("reverseContinueRequest....");
+        this.dalog("reverseContinueRequest....");
     }
 
     //单步跳过 F10
     protected nextRequest(response: DebugProtocol.NextResponse, args: DebugProtocol.NextArguments): void
     {
-        this.log("nextRequest....");
+        this.dalog("nextRequest....");
         this._debugMonitor.clear()
 		var da = this;
 		// this.sendEvent(new OutputEvent("nextRequest 单步跳过-->"))
@@ -374,7 +379,6 @@ export class LuaDebugAdapter extends LoggingDebugSession
 		// 	this.sendEvent(new OutputEvent("scopesManager_ null"))
 		// }
 		function callBackFun(isstep, isover) {
-            //da.log("单步跳过...." + isstep);
 			if (isstep) {
 				da.sendEvent(new StoppedEvent("step", 1));
 			}
@@ -392,7 +396,7 @@ export class LuaDebugAdapter extends LoggingDebugSession
 	 */
     protected stepInRequest(response: DebugProtocol.StepInResponse): void 
     {
-        this.log("stepInRequest....");
+        this.dalog("stepInRequest....");
 		this._debugMonitor.clear();
 		var da = this;
 		this._debugMonitor.stepReq(function (isstep, isover) {
@@ -418,7 +422,7 @@ export class LuaDebugAdapter extends LoggingDebugSession
     //取变量值
     protected evaluateRequest(response: DebugProtocol.EvaluateResponse, args: DebugProtocol.EvaluateArguments): void
     {
-        this.log("evaluateRequest....");
+        this.dalog("evaluateRequest....");
         var da: LuaDebugAdapter = this;
 		var frameId = args.frameId;
 		if (frameId == null) {

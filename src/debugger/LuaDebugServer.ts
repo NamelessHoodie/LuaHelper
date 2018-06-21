@@ -109,7 +109,7 @@ export class LuaDebugServer extends EventEmitter
         this._port = args.port;
         this._da = da;
 
-        this._da.log("LuaDebugServer Construction......");
+        this._da.dalog("LuaDebugServer Construction......");
         this._createServer();
     }
 
@@ -134,30 +134,24 @@ export class LuaDebugServer extends EventEmitter
 
             }
 
-            this._da.log(">>>>toLuaDB:" + msg );
+            this._da.dalog(">>>>toLuaDB:" + msg );
             currentSocket.write(msg + "\n");
 
         } catch (erro) {
-            this._da.log("发送消息到客户端错误:" + erro );
+            this._da.dalog("发送消息到客户端错误:" + erro );
         }
-    }
-
-
-    _connectionListenner2( socket ,self)
-    {
-        self._da.log("accept connection ............");
     }
 
 
     _createServer()
     {
         try{
-            this._da.log("LuaDebugServer Create.....");
+            this._da.dalog("LuaDebugServer Create.....");
             let lds = this;
             //this._netServer = net.createServer((socket, self:LuaDebugServer = this )=>this._connectionListenner).listen(this._port);//, self:LuaDebugServer = this
             this._netServer = net.createServer((socket, self:LuaDebugServer = this )=>{
                 
-                self._da.log("accept connection ............");
+                self._da.dalog("accept connection ............");
 
                 self._connectState = EConnState.Connected;
                 socket.setEncoding("utf8");
@@ -166,11 +160,11 @@ export class LuaDebugServer extends EventEmitter
         
                     if(!data)
                     {
-                        self._da.log("errordata:\n");
+                        self._da.dalog("errordata:\n");
                     }
         
-                    self._da.log("<<<<fromLuaDB");
-                    //self._da.log("data:" + data );
+                    self._da.dalog("<<<<fromLuaDB");
+                    //self._da.dalog("data:" + data );
         
                     var jsonStr:string = self._recvDatas;
                     if(jsonStr) {
@@ -184,13 +178,13 @@ export class LuaDebugServer extends EventEmitter
                     var jsonDatas:Array<any> = new Array<any>();
                      for (var index = 0; index < datas.length; index++) {
                             var element = datas[index];
-                        // luaDebug.log("element:" + element );
+                        // luaDebug.dalog("element:" + element );
                         if (element == "") {
-                            // luaDebug.log("结束" );
+                            // luaDebug.dalog("结束" );
                             continue;
                         }
                         if (element == null) {
-                            // luaDebug.log("element== null:" );
+                            // luaDebug.dalog("element== null:" );
                             continue;
                         }
         
@@ -220,14 +214,14 @@ export class LuaDebugServer extends EventEmitter
                             //断点设置成
                         } else if (event == LuaDebuggerProtocal.C2S_HITBreakPoint) {
         
-                            self._da.log("C2S_HITBreakPoint!!");
+                            self._da.dalog("C2S_HITBreakPoint!!");
                             self._da.isHitBreak = true
                             self.emit("C2S_HITBreakPoint", jdata)
                         } else if (event == LuaDebuggerProtocal.C2S_ReqVar) {
-                            self._da.log("C2S_ReqVar:" + rawDatas[index]);
+                            self._da.dalog("C2S_ReqVar:" + rawDatas[index]);
                             self.emit("C2S_ReqVar", jdata)
                         } else if (event == LuaDebuggerProtocal.C2S_NextResponse) {
-                            self._da.log("C2S_NextResponse");
+                            self._da.dalog("C2S_NextResponse");
                              self.emit("C2S_NextResponse", jdata);
                             // if(self.checkStackTopFileIsExist(jdata.data.stack[0])){
                             //     self.emit("C2S_NextResponse", jdata);
@@ -275,7 +269,7 @@ export class LuaDebugServer extends EventEmitter
         
                         else if (event == LuaDebuggerProtocal.C2S_SetSocketName) {
                             if (jdata.data.name == "mainSocket") {
-                                self._da.log("client connection!\n");
+                                self._da.dalog("client connection!\n");
                                 self._mainSocket = socket;
                                
                                 //发送断点信息
@@ -285,7 +279,7 @@ export class LuaDebugServer extends EventEmitter
                                 self.sendMsg(LuaDebuggerProtocal.S2C_RUN,
                                     {
                                         runTimeType: self._da.runtimeType,
-                                        isProntToConsole:self._da.isPrintToConsole
+                                        isProntToConsole:1
                                        
                                     })
                             } else if (jdata.data.name == "breakPointSocket") {
@@ -300,7 +294,7 @@ export class LuaDebugServer extends EventEmitter
         
                 //数据错误事件
                 socket.on('error', (exception)=> {
-                    self._da.log('socket error:' + exception );
+                    self._da.dalog('socket error:' + exception );
         
                     socket.end();
                 });
@@ -308,7 +302,7 @@ export class LuaDebugServer extends EventEmitter
 
                 //客户端关闭事件
                 socket.on('close', (data)=> {
-                    self._da.log('debugerclient close: ');
+                    self._da.dalog('debugerclient close: ');
                 });
 
 
@@ -318,26 +312,26 @@ export class LuaDebugServer extends EventEmitter
             //服务器监听事件
             this._netServer.on('listening', ( self:LuaDebugServer = this )=>{
                 
-                self._da.log("监听调试端口:" + self._netServer.address().port );
+                self._da.dalog("监听调试端口:" + self._netServer.address().port );
                 self.emit("ListenerReady");
             });
     
             //服务器错误事件
             this._netServer.on("error", (exception,self:LuaDebugServer = this ) => {
-                self._da.log("socket 调试服务器错误:" + exception );
+                self._da.dalog("socket 调试服务器错误:" + exception );
     
             });
     
         }catch( e )
         {
-            this._da.log('CreateServer Excp: ' + e );
+            this._da.dalog('CreateServer Excp: ' + e );
         }
 
     }
 
 
     public _sendAllBreakPoint() {
-        var infos = this._da.breakPointData.getAllClientBreakPointInfo()
+        var infos = this._da.gpChecker.getAllClientBreakPointInfo()
         this.sendMsg(LuaDebuggerProtocal.S2C_SetBreakPoints, infos, this._mainSocket)
     }
 
