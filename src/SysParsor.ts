@@ -433,6 +433,7 @@ export class SysParsor implements System
                     }
                 }
 
+                let tempAssignItem = null;
                 //如果是Identifier则直接挂到globalItems上去
                 if( variable.type == 'Identifier')
                 {
@@ -453,8 +454,8 @@ export class SysParsor implements System
                             break;
                         }
 
-                        var tempItem = new LuaSyntaxItem(ELuaSyntaxItemType.Variable,node,null,this.currentDoc);
-                        ps.moduleChecker.moduleItem.children.set(variable.name,tempItem);
+                        tempAssignItem = new LuaSyntaxItem(ELuaSyntaxItemType.Variable,node,null,this.currentDoc);
+                        ps.moduleChecker.moduleItem.children.set(variable.name,tempAssignItem);
                         break;
                     }
 
@@ -465,20 +466,26 @@ export class SysParsor implements System
                         break;
                     }
 
-                    var tempItem = new LuaSyntaxItem(ELuaSyntaxItemType.Variable,node,null,this.currentDoc);
+                    tempAssignItem = new LuaSyntaxItem(ELuaSyntaxItemType.Variable,node,null,this.currentDoc);
                     if(!GlobalAstInfo.globalItems.has(variable.name))
                     {
-                        GlobalAstInfo.globalItems.set(variable.name,tempItem);
+                        GlobalAstInfo.globalItems.set(variable.name,tempAssignItem);
                     }
 
                     //简单赋值关联，只关联非MemberExpression类型
-                    tempItem.valueItem = ps.getAssignmentValueItem(ps,node.init[0]);
+                    tempAssignItem.valueItem = ps.getAssignmentValueItem(ps,node.init[0]);
                     
                 }else if( variable.type == 'MemberExpression')
                 {
 
                     //递归判断多层嵌套定义
-                    ps._checkMemberExpressionInModule(ps,variable)
+                    tempAssignItem = ps._checkMemberExpressionInModule(ps,variable)
+                }
+
+                //当前一个node是TableConstructorExpression表示这个是表格定义
+                if ( this._lastParseNodeType == 'TableConstructorExpression' ) {
+                    tempAssignItem.valueType = ELuaSyntaxItemType.Table;
+                    tempAssignItem.children = this._tempTableItemsMap;
                 }
 
                 break;
@@ -510,6 +517,7 @@ export class SysParsor implements System
 
                 //当前一个node是TableConstructorExpression表示这个是表格定义
                 if ( this._lastParseNodeType == 'TableConstructorExpression' ) {
+                    localTempItem.valueType = ELuaSyntaxItemType.Table;
                     localTempItem.children = this._tempTableItemsMap;
                 }
 
@@ -590,7 +598,7 @@ export class SysParsor implements System
                         item = ps._checkMemberExpressionInModule(ps,node.identifier,null,ELuaSyntaxItemType.Function);
                         if (item) {
                             item.functionAstNode = node; 
-                            item.type = ELuaSyntaxItemType.Function;
+                            item.valueType = ELuaSyntaxItemType.Function;
                         }
 
                     }
@@ -757,7 +765,7 @@ export class SysParsor implements System
             item = new LuaSyntaxItem(ELuaSyntaxItemType.Value,valueNode,null,ps.currentDoc);
         }
 
-        //变量类型则寻找已存在变量定义,找到则把其儿子们复制到新Item中
+        //变量类型则寻找已存在变量Item,并返回
         if( valueNode.type == 'Identifier')
         {
             item = Utils.findDefinedItemInScopeAstInfo(valueNode.name,ps.currentScopeAst);
@@ -911,7 +919,9 @@ export class SysParsor implements System
                 rootItem = GlobalAstInfo.globalItems;
             }
             
-            rootItem.set(node.base.name,tempItem);
+            let tempItemBase = new LuaSyntaxItem(ELuaSyntaxItemType.Table,node.base,null,this.currentDoc);
+            tempItemBase.children.set(node.identifier.name,tempItem);
+            rootItem.set(node.base.name,tempItemBase);
                  
         }else if(node.base.type == 'MemberExpression')
         {

@@ -24,13 +24,14 @@ export enum ELuaSyntaxItemType
     Invalid=0,
     Variable,
     Function,
-    Value,
+    Value,      //string 或者number bool nil
+    Table,      
 }
 
 //一个语法项
 export class LuaSyntaxItem
 {
-    type;
+    valueType;
     valueItem;          //此项的赋值对象
     functionAstNode;
     astNode;
@@ -39,7 +40,7 @@ export class LuaSyntaxItem
     docInfo : DocInfo;
     constructor(type,astNode,parent,docInfo)
     {
-        this.type = type;
+        this.valueType = type;
         this.astNode = astNode;
         this.parent = parent;
         this.docInfo = docInfo;

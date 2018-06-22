@@ -121,9 +121,9 @@ export class LuaCompletionItemProvider implements vscode.CompletionItemProvider
                                 //scope局部变量
                                 scopeAst.localItems.forEach((value, key, map) => {
                                     let itemKind;
-                                    if (value.type == ELuaSyntaxItemType.Function) {
+                                    if (value.valueType == ELuaSyntaxItemType.Function) {
                                         itemKind = vscode.CompletionItemKind.Function;
-                                    }else if (value.type == ELuaSyntaxItemType.Variable ) {
+                                    }else if (value.valueType == ELuaSyntaxItemType.Variable ) {
                                         itemKind = vscode.CompletionItemKind.Variable;
                                     }
                                     
@@ -134,9 +134,9 @@ export class LuaCompletionItemProvider implements vscode.CompletionItemProvider
                                 if (scopeAst.paramsItems) {
                                     scopeAst.paramsItems.forEach((value, key, map) => {
                                         let itemKind;
-                                        if (value.type == ELuaSyntaxItemType.Function) {
+                                        if (value.valueType == ELuaSyntaxItemType.Function) {
                                             itemKind = vscode.CompletionItemKind.Function;
-                                        }else if (value.type == ELuaSyntaxItemType.Variable ) {
+                                        }else if (value.valueType == ELuaSyntaxItemType.Variable ) {
                                             itemKind = vscode.CompletionItemKind.Variable;
                                         }
                                         
@@ -159,9 +159,9 @@ export class LuaCompletionItemProvider implements vscode.CompletionItemProvider
                 //查找全局
                 globalItems.forEach((value, key, map) => {
                     let itemKind;
-                    if (value.type == ELuaSyntaxItemType.Function) {
+                    if (value.valueType == ELuaSyntaxItemType.Function) {
                         itemKind = vscode.CompletionItemKind.Function;
-                    }else if (value.type == ELuaSyntaxItemType.Variable ) {
+                    }else if (value.valueType == ELuaSyntaxItemType.Variable ) {
                         itemKind = vscode.CompletionItemKind.Variable;
                     }
                     
