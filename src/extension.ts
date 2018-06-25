@@ -40,28 +40,24 @@ export function activate(context: vscode.ExtensionContext) {
             LUA_MODE,new LuaCompletionItemProvider(), '.', ":",'"',"[","@"
         );
 
-        //实时编辑分析
-        let onDidChangedisPose = vscode.workspace.onDidChangeTextDocument(event => {
+        //修改保存時重新分析
+        let onDidChangedisPose = vscode.workspace.onDidSaveTextDocument(doc => {
 
-            event.contentChanges.forEach(element => {
-               // console.log("change:" + element.text); 
-            });
+            console.log("save:" + doc.fileName); 
 
-            if (ComConfig.GetSingleton().GetIsChangeTextCheck()) {
+            if (doc.languageId == "lua") {
 
-                if (event.document.languageId == "lua") {
-
-                    //如果是模板文件忽略
-                    if (event.document.uri.fsPath.toLowerCase().indexOf("filetemplates") > -1 || event.document.uri.fsPath.toLowerCase().indexOf("funtemplate") > -1) {
-                        return;
-                    }
-                    
-                    var uri = event.document.fileName;
-                    SysParsor.GetSingleton().parseOne(event.document.uri,event.document);
-
+                //如果是模板文件忽略
+                if (doc.uri.fsPath.toLowerCase().indexOf("filetemplates") > -1 || doc.uri.fsPath.toLowerCase().indexOf("funtemplate") > -1) {
+                    return;
                 }
                 
+                var uri = doc.fileName;
+                SysParsor.GetSingleton().parseOne(doc.uri,doc);
+
             }
+                
+            
         });
 
 

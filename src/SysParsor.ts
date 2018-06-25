@@ -194,7 +194,7 @@ export class SysParsor implements System
                     
                     this.currentParseLine = node.loc.start.line-1;
                     var templineTex = this.currentDoc.doc.lineAt(node.loc.start.line-1);
-                    SysLogger.getSingleton().log("current line:" + this.currentParseLine +  "type:"  + node.type + "Content:" + templineTex.text);
+                    //SysLogger.getSingleton().log("current line:" + this.currentParseLine +  "type:"  + node.type + "Content:" + templineTex.text);
 
                     if(this.isNewScope)
                     {
@@ -298,7 +298,7 @@ export class SysParsor implements System
                     this.scopeAstStack.push(newScopeAst);
                     this.currentScopeAst = newScopeAst;
 
-                    SysLogger.getSingleton().log("New scope Index:" + newScopeAst.scopeIndex);
+                    //SysLogger.getSingleton().log("New scope Index:" + newScopeAst.scopeIndex);
 
                 },
                 onDestroyScope : ()=>{

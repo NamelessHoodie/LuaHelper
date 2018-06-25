@@ -41,11 +41,6 @@ export class ComConfig
         return this._GetBoolConfigValue("luaOperatorCheck");
     }
 
-    //是否编辑文本实时语法检测
-    GetIsChangeTextCheck():boolean|undefined
-    {
-        return this._GetBoolConfigValue("changeTextCheck");
-    }
 
     private _GetBoolConfigValue(_configKey:string):boolean
     {
