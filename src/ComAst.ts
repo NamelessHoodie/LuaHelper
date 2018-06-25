@@ -31,6 +31,7 @@ export enum ELuaSyntaxItemType
 //一个语法项
 export class LuaSyntaxItem
 {
+    name;
     valueType;
     valueItem;          //此项的赋值对象
     functionAstNode;
@@ -38,13 +39,14 @@ export class LuaSyntaxItem
     parent;
     children;
     docInfo : DocInfo;
-    constructor(type,astNode,parent,docInfo)
+    constructor(name,type,astNode,parent,docInfo)
     {
+        this.name = name;
         this.valueType = type;
         this.astNode = astNode;
         this.parent = parent;
         this.docInfo = docInfo;
-        this.children = new Map<string,LuaSyntaxItem>();
+        this.children = new Map<string,LuaSyntaxItem>();  
     }
 }
 

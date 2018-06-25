@@ -32,7 +32,6 @@ export class RuntimeLoader
         var luaStartProc;
        // var targetWorkspace = args.localRoot;
 
-
         if ( platform === "win32" ) {
 
             //debugger runtime路径
