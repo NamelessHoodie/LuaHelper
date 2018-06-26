@@ -194,7 +194,7 @@ export class SysParsor implements System
                     
                     this.currentParseLine = node.loc.start.line-1;
                     var templineTex = this.currentDoc.doc.lineAt(node.loc.start.line-1);
-                    //SysLogger.getSingleton().log("current line:" + this.currentParseLine +  "type:"  + node.type + "Content:" + templineTex.text);
+                    SysLogger.getSingleton().log("current line:" + this.currentParseLine +  "type:"  + node.type + "Content:" + templineTex.text);
 
                     if(this.isNewScope)
                     {
@@ -357,9 +357,9 @@ export class SysParsor implements System
     {
 
         //for debug
-        // if (node.loc.start.line == 856) {
-        //     SysLogger.getSingleton().log("Bingo");
-        // }
+        if (node.loc.start.line == 8) {
+            SysLogger.getSingleton().log("Bingo");
+        }
 
         ps.currentAstNode = node;
 
@@ -480,8 +480,6 @@ export class SysParsor implements System
                         GlobalAstInfo.globalItems.set(variable.name,tempAssignItem);
                     }
 
-                    //简单赋值关联，只关联非MemberExpression类型
-                    tempAssignItem.valueItem = ps.getAssignmentValueItem(ps,node.init[0]);
                     
                 }else if( variable.type == 'MemberExpression')
                 {
@@ -490,11 +488,18 @@ export class SysParsor implements System
                     tempAssignItem = ps._checkMemberExpressionInModule(ps,variable)
                 }
 
-                //当前一个node是TableConstructorExpression表示这个是表格定义
-                if ( this._lastParseNodeType == 'TableConstructorExpression' && tempAssignItem ) {
-                    tempAssignItem.valueType = ELuaSyntaxItemType.Table;
-                    tempAssignItem.children = this._tempTableItemsMap;
-                }
+                //取赋值对象
+                let assignValueItem = ps.getAssignmentValueItem(ps,node.init[0]); 
+                //赋值关联，只关联非MemberExpression类型
+                tempAssignItem.valueItem = assignValueItem;
+                tempAssignItem.valueType = ELuaSyntaxItemType.Value;
+
+                // //当前一个node是TableConstructorExpression表示这个是表格定义
+                // if ( this._lastParseNodeType == 'TableConstructorExpression' ) {
+
+                //     tempAssignItem.valueType = ELuaSyntaxItemType.Table;
+                //     tempAssignItem.children = this._tempTableItemsMap;
+                // }
 
                 break;
             case 'LocalStatement':
@@ -606,7 +611,7 @@ export class SysParsor implements System
                         }
                     }else if( node.identifier.type =='MemberExpression')//函数定义式如果是memberexp则递归检测挂接
                     {
-                        item = ps._checkMemberExpressionInModule(ps,node.identifier,null,ELuaSyntaxItemType.Function);
+                        item = ps._checkMemberExpressionInModule(ps,node.identifier,ELuaSyntaxItemType.Function);
                         if (item) {
                             item.functionAstNode = node; 
                             item.valueType = ELuaSyntaxItemType.Function;
@@ -716,6 +721,26 @@ export class SysParsor implements System
             item = new LuaSyntaxItem(valueNode.type,ELuaSyntaxItemType.Value,valueNode,null,ps.currentDoc);
         }
 
+        //当前一个node是TableConstructorExpression表示这个是表格定义
+        if ( valueNode.type == 'TableConstructorExpression' ) {
+
+            let tableNode = valueNode;
+            let tempTableItemsMap = new  Map<string,LuaSyntaxItem>();
+            for (let index = 0; index < tableNode.fields.length; index++) {
+                const element = tableNode.fields[index];
+                if ( element.type == 'TableKeyString') {
+                    if(element.key.type == 'Identifier'){
+                        var tempItem = new LuaSyntaxItem(element.key.name,ELuaSyntaxItemType.Value,element.key,null,this.currentDoc);
+                        tempTableItemsMap.set(element.key.name,tempItem);
+                    }
+                }
+                
+            }
+
+            item = new LuaSyntaxItem(valueNode.type,ELuaSyntaxItemType.Table,valueNode,null,ps.currentDoc);
+            item.children = tempTableItemsMap;
+        }
+
         //变量类型则寻找已存在变量Item,并返回
         if( valueNode.type == 'Identifier')
         {
@@ -795,14 +820,11 @@ export class SysParsor implements System
                     if(!rootItem.children.has(node.identifier.name))
                     {
                         rootItem.children.set(node.identifier.name,tempItem);
+                        tempItem.parent = rootItem;
                     }else
                     {
-                        //如果存在则直接挂接子项
+                        //如果存在则忽略
                         var item = rootItem.children.get(node.identifier.name);
-                        // if (lastItem!=null) {
-                        //     item.children.set(lastItem.astNode.name,lastItem);
-                        // }
-
                         tempItem = item;
                         
                     }
@@ -822,14 +844,11 @@ export class SysParsor implements System
                     if (!rootItem.children.has(node.identifier.name)) 
                     {
                         rootItem.children.set(node.identifier.name,tempItem);
+                        tempItem.parent = rootItem;
                     }else
                     {
-                        //如果存在则直接挂接子项
+                        //如果存在则忽略
                         var item = rootItem.children.get(node.identifier.name);
-                        // if (lastItem!=null) {
-                        //     item.children.set(lastItem.astNode.name,lastItem);
-                        // }
-
                         tempItem = item;
                         
                     }
@@ -846,13 +865,11 @@ export class SysParsor implements System
                 if (!rootItem.children.has(node.identifier.name)) 
                 {
                     rootItem.children.set(node.identifier.name,tempItem);
+                    tempItem.parent = rootItem;
                 }else
                 {
-                    //如果存在则直接挂接子项
+                    //如果存在则忽略
                     var item = rootItem.children.get(node.identifier.name);
-                    // if (lastItem!=null) {
-                    //     item.children.set(lastItem.astNode.name,lastItem);
-                    // }
                     tempItem = item;
                     
                 }
@@ -872,6 +889,7 @@ export class SysParsor implements System
             //创建base节点并挂接到rootItem
             let tempItemBase = new LuaSyntaxItem(node.base.name,ELuaSyntaxItemType.Table,node.base,null,this.currentDoc);
             tempItemBase.children.set(node.identifier.name,tempItem);
+            tempItem.parent = tempItemBase;
             rootItem.set(node.base.name,tempItemBase);
                  
         }else if(node.base.type == 'MemberExpression')
@@ -879,17 +897,16 @@ export class SysParsor implements System
             lastItem = parsor._checkMemberExpressionInModule(parsor,node.base,null);
         }
 
-        //把上一级和这一级联系起来,返回上一级的
+        //把上一级和当前级联系起来
         if(lastItem!=null)
         {
 
             tempItem.parent = lastItem;
             lastItem.children.set(tempItem.astNode.name,tempItem);
             lastItem.valueType = ELuaSyntaxItemType.Table;
-
-            return lastItem;
         } 
 
+        //始终返回当前级
         return tempItem;
     
     }
