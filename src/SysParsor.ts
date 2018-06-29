@@ -481,7 +481,7 @@ export class SysParsor implements System
                     }
 
                     
-                }else if( variable.type == 'MemberExpression')
+                }else if( variable.type == 'MemberExpression' )
                 {
 
                     //递归判断多层嵌套定义
@@ -489,10 +489,10 @@ export class SysParsor implements System
                 }
 
                 //取赋值对象
-                let assignValueItem = ps.getAssignmentValueItem(ps,node.init[0]); 
+                let assignValueItem = ps.getAssignmentValueItem(ps,node.init[0]);
                 //赋值关联，只关联非MemberExpression类型
                 tempAssignItem.valueItem = assignValueItem;
-                tempAssignItem.valueType = ELuaSyntaxItemType.Value;
+                tempAssignItem.valueType = ELuaSyntaxItemType.Variable;
 
                 // //当前一个node是TableConstructorExpression表示这个是表格定义
                 // if ( this._lastParseNodeType == 'TableConstructorExpression' ) {
@@ -508,19 +508,13 @@ export class SysParsor implements System
                 if(variable.type == 'Identifier')
                 {
 
-                    if (variable.name == "varb") {
+                    if (variable.name == "varc") {
                         SysLogger.getSingleton().log("Bingo!!");
                     }
                     localTempItem = new LuaSyntaxItem(variable.name,ELuaSyntaxItemType.Value,node,null,this.currentDoc);
                     if(!ps.currentScopeAst.localItems.has(variable.name))
                     {
                         ps.currentScopeAst.localItems.set(variable.name,localTempItem);   
-                    }
-
-                    //简单赋值关联，只关联非MemberExpression类型
-                    if(node.init.length>0)
-                    {
-                        localTempItem.valueItem = ps.getAssignmentValueItem(ps,node.init[0]);
                     }
 
                   
@@ -531,11 +525,18 @@ export class SysParsor implements System
 
                 }
 
-                //当前一个node是TableConstructorExpression表示这个是表格定义
-                if ( this._lastParseNodeType == 'TableConstructorExpression' && localTempItem) {
-                    localTempItem.valueType = ELuaSyntaxItemType.Table;
-                    localTempItem.children = this._tempTableItemsMap;
-                }
+                //取赋值对象
+                let assignValueItem2 = ps.getAssignmentValueItem(ps,node.init[0]);
+                //赋值关联，只关联非MemberExpression类型
+                localTempItem.valueItem = assignValueItem2;
+                localTempItem.valueType = ELuaSyntaxItemType.Variable;
+
+
+                // //当前一个node是TableConstructorExpression表示这个是表格定义
+                // if ( this._lastParseNodeType == 'TableConstructorExpression' && localTempItem) {
+                //     localTempItem.valueType = ELuaSyntaxItemType.Table;
+                //     localTempItem.children = this._tempTableItemsMap;
+                // }
 
                 break;
             case 'FunctionDeclaration':
@@ -710,6 +711,12 @@ export class SysParsor implements System
     {
 
         var item;
+
+        if (valueNode.type == 'MemberExpression') {
+            item = ps._checkMemberExpressionInModule(ps,valueNode);
+            return item;
+        }
+
         //基础类型直接创建值类型Item
         if (    
             valueNode.type == 'StringLiteral'||
@@ -741,12 +748,16 @@ export class SysParsor implements System
             item.children = tempTableItemsMap;
         }
 
-        //变量类型则寻找已存在变量Item,并返回
-        if( valueNode.type == 'Identifier')
-        {
-            item = Utils.findDefinedItemInScopeAstInfo(valueNode.name,ps.currentScopeAst);
-            item = item.item;
-        }
+        // //变量类型则寻找已存在变量Item,并返回
+        // if( valueNode.type == 'Identifier')
+        // {
+        //     item = Utils.findDefinedItemInScopeAstInfo(valueNode.name,ps.currentScopeAst);
+        //     item = item.item;
+        //     if ( !item) {
+        //         //没找到则从全局找
+
+        //     }
+        // }
 
         return item;
 
@@ -788,7 +799,7 @@ export class SysParsor implements System
                             type:ELuaSyntaxItemType = null)
     {
 
-        let itemType = ELuaSyntaxItemType.Value;
+        let itemType = ELuaSyntaxItemType.Variable;
         if ( type ) {
             itemType = type
         }

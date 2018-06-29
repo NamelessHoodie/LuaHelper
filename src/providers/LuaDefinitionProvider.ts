@@ -5,7 +5,7 @@ import * as vscode from 'vscode'
 import {Utils,SysLogger} from '../Utils'
 import { ExceptionInfo } from '_debugger';
 import { ComFileAstDirectory } from '../ComFileAstDirectory'
-import {GlobalAstInfo ,ELuaSyntaxItemType } from '../ComAst'
+import {GlobalAstInfo ,ELuaSyntaxItemType, LuaSyntaxItem } from '../ComAst'
 
 
 export class GoDefinitionProvider implements vscode.DefinitionProvider 
@@ -251,7 +251,9 @@ export class GoDefinitionProvider implements vscode.DefinitionProvider
             //找子孙
             for (let index = 1; index < keywords.length; index++) {
                 const subkeyword = keywords[index];
-                subitem = subitem.children.get(subkeyword);
+                //从subitem查找其是否有子Item
+                subitem = this._findItemFromTableItem( subitem , subkeyword);
+                
                 if(subitem)
                 {
                     //找到继续找下一个孙子
@@ -265,29 +267,6 @@ export class GoDefinitionProvider implements vscode.DefinitionProvider
 
         }
 
-
-        if( item && subitem == null)
-        {
-            //Check祖宗的赋值对象
-            if(item.valueItem.type != ELuaSyntaxItemType.Value)
-            {
-                //找子孙
-                for (let index = 1; index < keywords.length; index++) {
-                    const subkeyword = keywords[index];
-                    subitem = item.valueItem.children.get(subkeyword);
-                    if(subitem)
-                    {
-                        //找到继续找下一个孙子
-                        continue;
-                    }else
-                    {
-                        //没找到就不用继续找了
-                        break;
-                    }
-                }
-            }
-        }
-
         //最终找到
         if(subitem)
         {
@@ -297,6 +276,22 @@ export class GoDefinitionProvider implements vscode.DefinitionProvider
         return null;
     }
 
+
+    //从一个table Item的children中找到指定key的Item，或者从一个valueItem(且valueType == table )的value中找到指定key的Item
+    _findItemFromTableItem( _item:LuaSyntaxItem, _key:string ):LuaSyntaxItem|null
+    {
+        let retItem = null;
+        if (_item.valueType == ELuaSyntaxItemType.Table) {
+            retItem = _item.children.get(_key);
+        } else if(_item.valueType === ELuaSyntaxItemType.Variable){
+            retItem = this._findItemFromTableItem(_item.valueItem,_key);
+            //值为其他类型则这个不是table返回NULL
+        }else if(_item.valueType === ELuaSyntaxItemType.Value){
+        
+        }
+
+        return retItem;
+    }
 
 
 
