@@ -81,10 +81,12 @@ export class LuaCompletionItemProvider implements vscode.CompletionItemProvider
                 //查找.的前一個符號對應的符號Item
                 let parentItem = this._searchSymbolItem(docAstInfo,word,position);
                 let tempItem;
+                //獲取parentItem所映射的tableItem
+                tempItem = Utils.findTableItemFromItem(parentItem);
                 //獲取其Chilren信息
-                if ( parentItem ) {
-    
-                    parentItem.children.forEach((value, key, map) => {
+                if ( tempItem ) {
+
+                    tempItem.children.forEach((value, key, map) => {
                         let itemKind;
                         if (value.type == ELuaSyntaxItemType.Function) {
                             itemKind = vscode.CompletionItemKind.Function;
@@ -262,34 +264,6 @@ export class LuaCompletionItemProvider implements vscode.CompletionItemProvider
                 item = item.item;
             }
 
-            //旧的遍历方式 弃用 abandon
-            // let checkLine = _position.line -1;
-            // var scopeList = [];
-            // if (_docAstInfo.scopeAstStack) {
-
-            //     for (let i = 0; i < _docAstInfo.scopeAstStack.length; i++) {
-            //         const scopeAstInfo = _docAstInfo.scopeAstStack[i];
-
-            //         for (let j = 0; j < scopeAstInfo.scope.nodes.length; j++) {
-            //             const node = scopeAstInfo.scope.nodes[j];
-            //             if(node.type == 'Identifier')
-            //             {
-            //                 if (node.name == keywordRoot ) {
-            //                     //找局部
-            //                     item = Utils.findDefinedItemInScopeAstInfo( keywordRoot , scopeAstInfo );
-            //                     item = item.item;
-            //                     break;
-            //                 }
-            //             }
-            //         }
-
-            //         if(item)
-            //         {
-            //             break;
-            //         }
-
-            //     }
-            // }
 
         }catch(excp)
         {
@@ -311,14 +285,15 @@ export class LuaCompletionItemProvider implements vscode.CompletionItemProvider
 
 
         //需要查找子孙的情况,找到祖宗后找孙子
-        let subitem = null;
+        let subitem = item;
         if(item)
         {
             //找子孙
             for (let index = 1; index < keywords.length; index++) 
             {
                 const subkeyword = keywords[index];
-                subitem = item.children.get(subkeyword);
+                //从subitem查找其是否有子Item
+                subitem = Utils.findItemFromTableItem( subitem , subkeyword);
                 if(subitem)
                 {
                     //找到继续找下一个孙子
@@ -330,29 +305,6 @@ export class LuaCompletionItemProvider implements vscode.CompletionItemProvider
                 }
             }
 
-        }
-
-        //Check祖宗的赋值对象
-        if( item && subitem == null)
-        {
-            if(item.valueItem.type != ELuaSyntaxItemType.Value)
-            {
-                //找子孙
-                for (let index = 1; index < keywords.length; index++) 
-                {
-                    const subkeyword = keywords[index];
-                    subitem = item.valueItem.children.get(subkeyword);
-                    if(subitem)
-                    {
-                        //找到继续找下一个孙子
-                        continue;
-                    }else
-                    {
-                        //没找到就不用继续找了
-                        break;
-                    }
-                }
-            }
         }
 
 

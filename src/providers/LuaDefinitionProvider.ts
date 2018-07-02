@@ -252,7 +252,7 @@ export class GoDefinitionProvider implements vscode.DefinitionProvider
             for (let index = 1; index < keywords.length; index++) {
                 const subkeyword = keywords[index];
                 //从subitem查找其是否有子Item
-                subitem = this._findItemFromTableItem( subitem , subkeyword);
+                subitem = Utils.findItemFromTableItem( subitem , subkeyword);
                 
                 if(subitem)
                 {
@@ -277,21 +277,7 @@ export class GoDefinitionProvider implements vscode.DefinitionProvider
     }
 
 
-    //从一个table Item的children中找到指定key的Item，或者从一个valueItem(且valueType == table )的value中找到指定key的Item
-    _findItemFromTableItem( _item:LuaSyntaxItem, _key:string ):LuaSyntaxItem|null
-    {
-        let retItem = null;
-        if (_item.valueType == ELuaSyntaxItemType.Table) {
-            retItem = _item.children.get(_key);
-        } else if(_item.valueType === ELuaSyntaxItemType.Variable){
-            retItem = this._findItemFromTableItem(_item.valueItem,_key);
-            //值为其他类型则这个不是table返回NULL
-        }else if(_item.valueType === ELuaSyntaxItemType.Value){
-        
-        }
 
-        return retItem;
-    }
 
 
 

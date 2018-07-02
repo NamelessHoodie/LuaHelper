@@ -90,9 +90,20 @@ export class SysParsor implements System
 
         let index = 0;
 
+
+        //在状态栏显示分析进度
+        var showParsePercentageInStatusBar = function ( msg:string , _index )
+        {
+            let percent = (_index / _uris.length)*100;
+            percent = Math.round(percent);
+            barItem.text = msg + percent  + "%";
+        }
+
+
         var func = {
 
             self:this,
+
             //打开和分析一个文件，迭代
             openAndParseFile : function (_uri:vscode.Uri) {
                 try{
@@ -109,16 +120,19 @@ export class SysParsor implements System
                                     //     //Bingo
                                     //     console.log("Bingo");
                                     // }
-    
-                                    SysLogger.getSingleton().log("ParseLuaFile: " + _uri);
-                                    barItem.text = _uri.path;
-    
+                                    var timestamp3 = new Date().getTime();
+                                    showParsePercentageInStatusBar( "Luahelper Parsing : " , index);
                                     func.self.parseOne(_uri,doc);
+                                    var timeOffset = new Date().getTime() - timestamp3;
+                                    SysLogger.getSingleton().log( "cost:" +  timeOffset + " | ParseLuaFile: " + _uri);
+
+
                                     //分析下一个
                                     func.openAndParseFile(_uris[index]);
     
                                     if (index == _uris.length + 1 ) {
                                         SysLogger.getSingleton().log('Parse Finished!!!');
+                                        barItem.text = ( " Luahelper Ready! " );
                                     }
                                 }
                             }catch(excp)
@@ -142,11 +156,12 @@ export class SysParsor implements System
         }
 
         func.openAndParseFile(_uris[index]);
-
-        barItem.text = "Parse Finished:" + _uris.length;
         barItem.show();
         
     }
+
+
+
 
 
     /**
@@ -194,7 +209,7 @@ export class SysParsor implements System
                     
                     this.currentParseLine = node.loc.start.line-1;
                     var templineTex = this.currentDoc.doc.lineAt(node.loc.start.line-1);
-                    SysLogger.getSingleton().log("current line:" + this.currentParseLine +  "type:"  + node.type + "Content:" + templineTex.text);
+                    //SysLogger.getSingleton().log("current line:" + this.currentParseLine +  "type:"  + node.type + "Content:" + templineTex.text);
 
                     if(this.isNewScope)
                     {
@@ -271,8 +286,6 @@ export class SysParsor implements System
                         SysLogger.getSingleton().log("解析出错:" + excp + "|" + node.loc.start.line);
                     }
 
-                    //缓存每次解析的node的type用于下一个node判断需要依赖前一个node类型时使用
-                    this._lastParseNodeType = node.type;
                     
     
                 },
@@ -343,10 +356,6 @@ export class SysParsor implements System
         this.moduleChecker = new ModuleChecker();
     }
 
-    //缓存table的定义Items
-    _tempTableItemsMap : Map<string,LuaSyntaxItem> = null;
-    //缓存每次解析的node的type用于下一个node判断需要依赖前一个node类型时使用
-    _lastParseNodeType : string = null;
 
     /**
      * luaParse onCreateNode事件调用
@@ -357,9 +366,9 @@ export class SysParsor implements System
     {
 
         //for debug
-        if (node.loc.start.line == 8) {
-            SysLogger.getSingleton().log("Bingo");
-        }
+        // if (node.loc.start.line == 16) {
+        //     SysLogger.getSingleton().log("Bingo");
+        // }
 
         ps.currentAstNode = node;
 
@@ -383,28 +392,13 @@ export class SysParsor implements System
 
         switch(node.type)
         {
-            //表定义式判断{x=?,y=?} 两种方式取一
-            case 'TableConstructorExpression':
-                //TableConstructorExpression的识别在赋值之前，先暂存
-                this._tempTableItemsMap = new Map<string,LuaSyntaxItem>();
-
-                for (let index = 0; index < node.fields.length; index++) {
-                    const element = node.fields[index];
-                    if ( element.type == 'TableKeyString') {
-                        if(element.key.type == 'Identifier'){
-                            var tempItem = new LuaSyntaxItem(element.key.name,ELuaSyntaxItemType.Value,element.key,null,this.currentDoc);
-                            this._tempTableItemsMap.set(element.key.name,tempItem);
-                        }
-                    }
-                    
-                }
-                break;
             //赋值式判断
             case 'AssignmentStatement':
 
                 var variable = node.variables[0];
                 
                 if ( variable.type == 'IndexExpression') {
+                    //field_dict[key] = value 这种字典类型的赋值不做分析除了特殊类型_G[]来解析全局
                     if (variable.base.type == 'Identifier') {
                         //特殊情形判断： _G[xxx] = ?
                         if (variable.base.name == '_G') {
@@ -437,69 +431,72 @@ export class SysParsor implements System
                                 }
                             }
                         }
+                        else
+                        {
+                            break;
+                        }
 
+                    }else
+                    {
+                        break;
                     }
                 }
 
                 let tempAssignItem = null;
-                //如果是Identifier则直接挂到globalItems上去
-                if( variable.type == 'Identifier')
-                {
+                // //如果是Identifier则直接挂到globalItems上去
+                // if( variable.type == 'Identifier')
+                // {
 
-                    if (ps.currentScopeAst.paramsItems != undefined) {
-                        //如果已定义则忽略
-                        if(ps.currentScopeAst.paramsItems.has(variable.name))
-                        {
-                            break;
-                        }
-                    }
-
-
-                    //如果是模块则挂到模块表上
-                    if ( ps.moduleChecker.isModuleFile === true ) {
-
-                        if (ps.moduleChecker.moduleItem.children.has(variable.name)) {
-                            break;
-                        }
-
-                        tempAssignItem = new LuaSyntaxItem(variable.name,ELuaSyntaxItemType.Value,node,null,this.currentDoc);
-                        ps.moduleChecker.moduleItem.children.set(variable.name,tempAssignItem);
-                        break;
-                    }
+                //     if (ps.currentScopeAst.paramsItems != undefined) {
+                //         //如果已定义则忽略
+                //         if(ps.currentScopeAst.paramsItems.has(variable.name))
+                //         {
+                //             break;
+                //         }
+                //     }
 
 
-                    //否则挂到全局表上
-                    if (GlobalAstInfo.globalItems.has(variable.name) || ps.currentScopeAst.localItems.has(variable.name))
-                    {
-                        break;
-                    }
+                //     //如果是模块则挂到模块表上
+                //     if ( ps.moduleChecker.isModuleFile === true ) {
 
-                    tempAssignItem = new LuaSyntaxItem(variable.name,ELuaSyntaxItemType.Value,node,null,this.currentDoc);
-                    if(!GlobalAstInfo.globalItems.has(variable.name))
-                    {
-                        GlobalAstInfo.globalItems.set(variable.name,tempAssignItem);
-                    }
+                //         if (ps.moduleChecker.moduleItem.children.has(variable.name)) {
+                //             break;
+                //         }
+
+                //         tempAssignItem = new LuaSyntaxItem(variable.name,ELuaSyntaxItemType.Value,node,null,this.currentDoc);
+                //         ps.moduleChecker.moduleItem.children.set(variable.name,tempAssignItem);
+                //         break;
+                //     }
+
+
+                //     //否则挂到全局表上
+                //     if (GlobalAstInfo.globalItems.has(variable.name) || ps.currentScopeAst.localItems.has(variable.name))
+                //     {
+                //         break;
+                //     }
+
+                //     tempAssignItem = new LuaSyntaxItem(variable.name,ELuaSyntaxItemType.Value,node,null,this.currentDoc);
+                //     if(!GlobalAstInfo.globalItems.has(variable.name))
+                //     {
+                //         GlobalAstInfo.globalItems.set(variable.name,tempAssignItem);
+                //     }
 
                     
-                }else if( variable.type == 'MemberExpression' )
-                {
+                // }else if( variable.type == 'MemberExpression' )
+                // {
 
-                    //递归判断多层嵌套定义
-                    tempAssignItem = ps._checkMemberExpressionInModule(ps,variable)
-                }
-
-                //取赋值对象
-                let assignValueItem = ps.getAssignmentValueItem(ps,node.init[0]);
-                //赋值关联，只关联非MemberExpression类型
-                tempAssignItem.valueItem = assignValueItem;
-                tempAssignItem.valueType = ELuaSyntaxItemType.Variable;
-
-                // //当前一个node是TableConstructorExpression表示这个是表格定义
-                // if ( this._lastParseNodeType == 'TableConstructorExpression' ) {
-
-                //     tempAssignItem.valueType = ELuaSyntaxItemType.Table;
-                //     tempAssignItem.children = this._tempTableItemsMap;
+                //     //递归判断多层嵌套定义
+                //     tempAssignItem = ps._checkMemberExpressionInModule(ps,variable)
                 // }
+
+                tempAssignItem = ps._getItemFromNode(ps,variable);
+
+                //取赋值对象并关联
+                if (node.init.length > 0 && tempAssignItem) {    
+                    let assignValueItem = ps.getAssignmentValueItem(ps,node.init[0]);
+                    tempAssignItem.valueItem = assignValueItem;
+                    tempAssignItem.valueType = ELuaSyntaxItemType.Variable;
+                }
 
                 break;
             case 'LocalStatement':
@@ -507,10 +504,10 @@ export class SysParsor implements System
                 let localTempItem = null;
                 if(variable.type == 'Identifier')
                 {
-
-                    if (variable.name == "varc") {
-                        SysLogger.getSingleton().log("Bingo!!");
-                    }
+                    //for debug
+                    // if (variable.name == "varb") {
+                    //     SysLogger.getSingleton().log("Bingo!!");
+                    // }
                     localTempItem = new LuaSyntaxItem(variable.name,ELuaSyntaxItemType.Value,node,null,this.currentDoc);
                     if(!ps.currentScopeAst.localItems.has(variable.name))
                     {
@@ -526,17 +523,11 @@ export class SysParsor implements System
                 }
 
                 //取赋值对象
-                let assignValueItem2 = ps.getAssignmentValueItem(ps,node.init[0]);
-                //赋值关联，只关联非MemberExpression类型
-                localTempItem.valueItem = assignValueItem2;
-                localTempItem.valueType = ELuaSyntaxItemType.Variable;
-
-
-                // //当前一个node是TableConstructorExpression表示这个是表格定义
-                // if ( this._lastParseNodeType == 'TableConstructorExpression' && localTempItem) {
-                //     localTempItem.valueType = ELuaSyntaxItemType.Table;
-                //     localTempItem.children = this._tempTableItemsMap;
-                // }
+                if (node.init.length>0 && localTempItem) {
+                    let assignValueItem2 = ps.getAssignmentValueItem(ps,node.init[0]);
+                    localTempItem.valueItem = assignValueItem2;
+                    localTempItem.valueType = ELuaSyntaxItemType.Variable;
+                }
 
                 break;
             case 'FunctionDeclaration':
@@ -612,7 +603,8 @@ export class SysParsor implements System
                         }
                     }else if( node.identifier.type =='MemberExpression')//函数定义式如果是memberexp则递归检测挂接
                     {
-                        item = ps._checkMemberExpressionInModule(ps,node.identifier,ELuaSyntaxItemType.Function);
+                        //item = ps._checkMemberExpressionInModule(ps,node.identifier,ELuaSyntaxItemType.Function);
+                        item = ps._getItemFromNode(ps,node.identifier);
                         if (item) {
                             item.functionAstNode = node; 
                             item.valueType = ELuaSyntaxItemType.Function;
@@ -646,15 +638,15 @@ export class SysParsor implements System
         scope.endOffset = node.range[1];
         
         scope.nodes.push(node);
-        if (node.type === 'Identifier' && node.name === '__scope_marker__') {
-            ps.currentScope = scope;
-        }
-        else if (node.type === 'CallExpression' && node.base.type === 'MemberExpression') {
-            const { name, container } = ps._getIdentifierName(node.base);
-            if (name === '__completion_helper__') {
-                //ps.completionTableName = container;
-            }
-        }
+        // if (node.type === 'Identifier' && node.name === '__scope_marker__') {
+        //     ps.currentScope = scope;
+        // }
+        // else if (node.type === 'CallExpression' && node.base.type === 'MemberExpression') {
+        //     const { name, container } = ps._getIdentifierName(node.base);
+        //     if (name === '__completion_helper__') {
+        //         //ps.completionTableName = container;
+        //     }
+        // }
 
         ps.lastAstNode = ps.currentAstNode;
     }
@@ -710,10 +702,15 @@ export class SysParsor implements System
     getAssignmentValueItem(ps:SysParsor, valueNode )
     {
 
+        if (!valueNode) {
+            return null;
+        }
+
         var item;
 
-        if (valueNode.type == 'MemberExpression') {
-            item = ps._checkMemberExpressionInModule(ps,valueNode);
+        if (valueNode.type == 'MemberExpression' || valueNode.type == 'Identifier') {
+            //item = ps._checkMemberExpressionInModule(ps,valueNode);
+            item = ps._getItemFromNode(ps,valueNode,false);
             return item;
         }
 
@@ -754,9 +751,22 @@ export class SysParsor implements System
         //     item = Utils.findDefinedItemInScopeAstInfo(valueNode.name,ps.currentScopeAst);
         //     item = item.item;
         //     if ( !item) {
-        //         //没找到则从全局找
-
+        //         //没有取到同时该文件是Module则去Module中取
+        //         if(ps.moduleChecker.isModuleFile === true && ps.moduleChecker.moduleItem.children.has(valueNode.name))
+        //         {
+        //             item = ps.moduleChecker.moduleItem.children.get(valueNode.name);
+        //         }
         //     }
+
+        //     if ( !item) {
+        //         //都没取去全局表中取
+        //         if(GlobalAstInfo.globalItems.has(valueNode.name) )
+        //         {
+        //             item = GlobalAstInfo.globalItems.get(valueNode.name);
+        //         } 
+        //     }
+
+
         // }
 
         return item;
@@ -785,6 +795,109 @@ export class SysParsor implements System
         }
         return { name: null, container: null };
     }
+
+
+
+    /**
+     * 将(非Local)node对象生成Item并挂接到对应Items列表
+     * 如aa.bb.cc 最终返回cc的Item 并且 cc挂接到bb上,bb挂接到aa上，aa挂接到全局表上或者module上
+     * 返回Item的类型都默认为 ELuaSyntaxItemType.Variable
+     * @param ps 
+     * @param node
+     * @param isCreate 当节点Item没有找到的时候是否创建新的，默认为true
+     */
+    private _getItemFromNode( ps:SysParsor , node , isCreate = true)
+    {
+        var retItem = null;
+
+        if (node.type == 'Identifier') {
+
+            //把self名称换成类名
+            if ( node.name === 'self' ) {
+                
+                let selfObjName = Utils.getCurrentScopeAstSelfObjName(ps.currentScopeAst);
+                if(selfObjName)
+                {
+                    node.name = selfObjName;
+                }           
+                
+            }
+
+            //逐级取item
+            var ret = Utils.findDefinedItemInScopeAstInfo(node.name,ps.currentScopeAst);
+            retItem = ret.item;
+            if(retItem)
+            {
+                return retItem;
+            }
+            
+            
+            //没有取到同时该文件是Module则去Module中取
+            if(ps.moduleChecker.isModuleFile === true && ps.moduleChecker.moduleItem.children.has(node.name))
+            {
+                retItem = ps.moduleChecker.moduleItem.children.get(node.name);
+                if(retItem)
+                {
+                    return retItem;
+                }
+            }
+            
+            //都没取到并且SeeAll则去全局表中取
+            if(GlobalAstInfo.globalItems.has(node.name))
+            {
+                retItem = GlobalAstInfo.globalItems.get(node.name);
+                if (retItem) {
+                    return retItem;
+                }    
+            }
+
+            //没有则创建
+            if (isCreate) {
+
+                var rootItem = null;
+                //没定义则说明是全局或者是Module下
+                if (ps.moduleChecker.isModuleFile === true) 
+                {
+                    rootItem = ps.moduleChecker.moduleItem.children;
+                }else
+                {
+                    rootItem = GlobalAstInfo.globalItems;
+                }
+                //创建节点并挂接到rootItem
+                retItem = new LuaSyntaxItem(node.name,ELuaSyntaxItemType.Variable,node,null,this.currentDoc);
+                rootItem.set(node.name,retItem);  
+            }
+
+        }else if(node.type == 'MemberExpression')
+        {
+            //创建子一级ITEM 如 aa.bb.cc 则这里把cc这一级创建Item aa.bb继续递归
+            let nodeIdentifier = node.identifier;
+            let nodeBase = node.base;
+            let lastItem = ps._getItemFromNode(ps,nodeBase,isCreate);
+
+            //把上一级和当前级联系起来,设置上一级类型为'Table'
+            if(lastItem!=null)
+            {
+                //如果上一级没有当前级符号说明是定义，加入新符号
+                if (!lastItem.children.has(nodeIdentifier.name)) {
+                    if (isCreate) {
+                        retItem = new LuaSyntaxItem(nodeIdentifier.name,ELuaSyntaxItemType.Variable,nodeIdentifier,null,this.currentDoc);
+                        retItem.parent = lastItem;
+                        lastItem.children.set(retItem.astNode.name,retItem);
+                        lastItem.valueType = ELuaSyntaxItemType.Table;
+                    }
+                }else
+                {
+                    retItem = lastItem.children.get(nodeIdentifier.name);
+                }
+            } 
+
+        }
+
+        return retItem;
+
+    }
+
 
 
     /**

@@ -2,7 +2,7 @@
 import * as vscode from 'vscode'
 
 
-import {DocAstInfo,ScopeAstInfo,LuaSyntaxItem,GlobalAstInfo} from './ComAst'
+import {DocAstInfo,ScopeAstInfo,LuaSyntaxItem,GlobalAstInfo,ELuaSyntaxItemType} from './ComAst'
 import { ComConfig } from "./ComConfig";
 
 
@@ -29,7 +29,7 @@ export class SysLogger
     {
         //创建自定义日志频道
         this._logger = vscode.window.createOutputChannel("luahelper/log");
-        this._logger.show();
+        //this._logger.show();
         this._disposable = this._logger;
     }
 
@@ -261,9 +261,11 @@ export class Utils
             }
         }
 
-        //如果是顶级scope且是Module则从Module中找
-        if (_scopeAstInfo.scopeIndex === 0 && _scopeAstInfo.docAst.moduleTableItem != null) {
-            item = _scopeAstInfo.docAst.moduleTableItem.children.get(_indentifier)
+        if (!item) {
+            //如果是顶级scope且是Module则从Module中找
+            if (_scopeAstInfo.scopeIndex === 0 && _scopeAstInfo.docAst.moduleTableItem != null) {
+                item = _scopeAstInfo.docAst.moduleTableItem.children.get(_indentifier)
+            }
         }
 
         ret.item = item;
@@ -363,5 +365,40 @@ export class Utils
     }
 
 
+
+    /**
+     * 遍历item的值，如果是一个table,则找到指定key的Item并返回，否则返回空
+     * @param _item 被遍歷的item
+     * @param _key 
+     */
+    static findItemFromTableItem( _item:LuaSyntaxItem, _key:string ):LuaSyntaxItem|null
+    {
+        let retItem = null;
+
+        //先看看此Item是否是tableItem
+        let tableItem = Utils.findTableItemFromItem(_item);
+        if (tableItem) {
+            retItem = tableItem.children.get(_key);
+        }
+
+        return retItem;
+    }
+
+
+    /**
+     * 遍历item的值是否为table，如果其是一个table则返回它，如果他是一个Vararble则递归下去，没有则返回null
+     * @param _item 
+     */
+    static findTableItemFromItem(_item:LuaSyntaxItem):LuaSyntaxItem|null
+    {
+        let retItem = null;
+        if (_item.valueType == ELuaSyntaxItemType.Table) {
+            retItem = _item;
+        }else if(_item.valueType === ELuaSyntaxItemType.Variable){
+            retItem = Utils.findTableItemFromItem(_item.valueItem);
+        }
+
+        return retItem;
+    }
 
 }

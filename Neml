@@ -511,7 +511,7 @@ S2C_LoadLuaScript
 <XPD:REF name="DiagramOwner">Rewf9mw7pEW5M5w3KR7megAA</XPD:REF>
 <XPD:OBJ name="DiagramView" type="UMLClassDiagramView" guid="vgDad0T9MkujGiT/Dd1E/QAA">
 <XPD:REF name="Diagram">2klg54W9ekm6CYnVYPuplQAA</XPD:REF>
-<XPD:ATTR name="#OwnedViews" type="integer">25</XPD:ATTR>
+<XPD:ATTR name="#OwnedViews" type="integer">24</XPD:ATTR>
 <XPD:OBJ name="OwnedViews[0]" type="UMLClassView" guid="LndkfGEXWU2nOJkzZHzG3gAA">
 <XPD:ATTR name="LineColor" type="string">clMaroon</XPD:ATTR>
 <XPD:ATTR name="FillColor" type="string">$00B9FFFF</XPD:ATTR>
@@ -1269,38 +1269,7 @@ S2C_LoadLuaScript
 <XPD:REF name="Model">zE5fB2W0X06aqovzoJ3cwwAA</XPD:REF>
 </XPD:OBJ>
 </XPD:OBJ>
-<XPD:OBJ name="OwnedViews[23]" type="UMLClassView" guid="8wPrj030oEq21QmiyoE0FwAA">
-<XPD:ATTR name="LineColor" type="string">clMaroon</XPD:ATTR>
-<XPD:ATTR name="FillColor" type="string">$00B9FFFF</XPD:ATTR>
-<XPD:ATTR name="Left" type="integer">1120</XPD:ATTR>
-<XPD:ATTR name="Top" type="integer">916</XPD:ATTR>
-<XPD:ATTR name="Width" type="integer">80</XPD:ATTR>
-<XPD:ATTR name="Height" type="integer">82</XPD:ATTR>
-<XPD:REF name="Model">b3zh9YSQOEScIaU1UtBBaQAA</XPD:REF>
-<XPD:OBJ name="NameCompartment" type="UMLNameCompartmentView" guid="vfiQNjDeqEedE1WD1N34ngAA">
-<XPD:OBJ name="NameLabel" type="LabelView" guid="XuMmVmSC406BL3i9Yg5klQAA">
-<XPD:ATTR name="FontStyle" type="integer">1</XPD:ATTR>
-<XPD:ATTR name="Text" type="string">ValueItem</XPD:ATTR>
-</XPD:OBJ>
-<XPD:OBJ name="StereotypeLabel" type="LabelView" guid="Eyi+Xfms3kqNIuWLeJThuAAA">
-<XPD:ATTR name="Visible" type="boolean">False</XPD:ATTR>
-</XPD:OBJ>
-<XPD:OBJ name="PropertyLabel" type="LabelView" guid="2KrOCFOy9UOxS2htGqLqqgAA">
-<XPD:ATTR name="Visible" type="boolean">False</XPD:ATTR>
-</XPD:OBJ>
-</XPD:OBJ>
-<XPD:OBJ name="AttributeCompartment" type="UMLAttributeCompartmentView" guid="LGKnWizL6Um0aYNu8UIfeQAA">
-<XPD:REF name="Model">b3zh9YSQOEScIaU1UtBBaQAA</XPD:REF>
-</XPD:OBJ>
-<XPD:OBJ name="OperationCompartment" type="UMLOperationCompartmentView" guid="VrDJoVWM/Emcqd8dpK7wKgAA">
-<XPD:REF name="Model">b3zh9YSQOEScIaU1UtBBaQAA</XPD:REF>
-</XPD:OBJ>
-<XPD:OBJ name="TemplateParameterCompartment" type="UMLTemplateParameterCompartmentView" guid="nq93B4nPJUOIfyogx1+/9gAA">
-<XPD:ATTR name="Visible" type="boolean">False</XPD:ATTR>
-<XPD:REF name="Model">b3zh9YSQOEScIaU1UtBBaQAA</XPD:REF>
-</XPD:OBJ>
-</XPD:OBJ>
-<XPD:OBJ name="OwnedViews[24]" type="UMLNoteView" guid="/ovuwcTtQEWJTlpZwEQnFQAA">
+<XPD:OBJ name="OwnedViews[23]" type="UMLNoteView" guid="/ovuwcTtQEWJTlpZwEQnFQAA">
 <XPD:ATTR name="LineColor" type="string">clMaroon</XPD:ATTR>
 <XPD:ATTR name="FillColor" type="string">$00B9FFFF</XPD:ATTR>
 <XPD:ATTR name="Left" type="integer">1256</XPD:ATTR>
@@ -6104,7 +6073,7 @@ S2C_LoadLuaScript
 <XPD:REF name="Enumeration">FgRsmqelrE+HW01noQrOlgAA</XPD:REF>
 </XPD:OBJ>
 <XPD:OBJ name="Literals[3]" type="UMLEnumerationLiteral" guid="kthVkNrB7Uecv68TSxVTJwAA">
-<XPD:ATTR name="Name" type="string">table</XPD:ATTR>
+<XPD:ATTR name="Name" type="string">Table=4</XPD:ATTR>
 <XPD:REF name="Enumeration">FgRsmqelrE+HW01noQrOlgAA</XPD:REF>
 </XPD:OBJ>
 </XPD:OBJ>
@@ -8631,11 +8600,6 @@ debugger_stackInfo
 <XPD:OBJ name="OwnedElements[21]" type="UMLClass" guid="b3zh9YSQOEScIaU1UtBBaQAA">
 <XPD:ATTR name="Name" type="string">ValueItem</XPD:ATTR>
 <XPD:REF name="Namespace">Rewf9mw7pEW5M5w3KR7megAA</XPD:REF>
-<XPD:ATTR name="#Views" type="integer">4</XPD:ATTR>
-<XPD:REF name="Views[0]">8wPrj030oEq21QmiyoE0FwAA</XPD:REF>
-<XPD:REF name="Views[1]">LGKnWizL6Um0aYNu8UIfeQAA</XPD:REF>
-<XPD:REF name="Views[2]">VrDJoVWM/Emcqd8dpK7wKgAA</XPD:REF>
-<XPD:REF name="Views[3]">nq93B4nPJUOIfyogx1+/9gAA</XPD:REF>
 <XPD:ATTR name="#Attributes" type="integer">3</XPD:ATTR>
 <XPD:OBJ name="Attributes[0]" type="UMLAttribute" guid="hePH6okTyUqS3A8YsSUE4gAA">
 <XPD:ATTR name="Name" type="string">valueType</XPD:ATTR>
