@@ -9,6 +9,8 @@ support lua version 5.1 and 5.3.
 
 
 ## Features
+- **调试器(debugger for lua5.1)**
+
 
 - **符号定义跳转(goto definition)**
 
@@ -32,9 +34,15 @@ support lua version 5.1 and 5.3.
 
 ## Known Issues
 
-don't support chinese language to name file ;
+don't support parsing 'IndexExpression' like this format: bb[?] = ? or aa.bb[?] = ? ;
 
 ## Release Notes
+
+### 0.1.2
+
+* Added feature about debugger of lua5.1;
+* Fixed issue that reparse file when it been saved;
+* Now support parsing about table symbol;
 
 ### 0.0.7
 

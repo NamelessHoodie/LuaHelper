@@ -342,6 +342,10 @@ export class Utils
                 posStart = index + 1;
                 break;
             }     
+
+            if (index == 0) {
+                posStart = 0;
+            }
            
         }
 

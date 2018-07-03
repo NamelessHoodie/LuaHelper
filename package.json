@@ -2,7 +2,7 @@
     "name": "luahelper",
     "displayName": "luahelper",
     "description": "luahelper",
-    "version": "0.0.6",
+    "version": "0.1.2",
     "publisher": "zasidelpf",
 	"bugs": {
         "url": "https://gitee.com/debugconsole/luahelper/issues",

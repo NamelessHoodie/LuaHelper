@@ -114,12 +114,15 @@ export class SysParsor implements System
                                 if( _uri != undefined)
                                 {
 
+                                    // if ( _uri.path.search("SoundManager") != -1 ) {
+                                    //     SysLogger.getSingleton().log("Bingoo");
+                                    // }
+
                                     var timestamp3 = new Date().getTime();
                                     showParsePercentageInStatusBar( "Luahelper Parsing : " , index);
                                     func.self.parseOne(_uri,doc);
                                     var timeOffset = new Date().getTime() - timestamp3;
                                     SysLogger.getSingleton().log( "cost:" +  timeOffset + " | ParseLuaFile: " + _uri);
-
 
                                     //分析下一个
                                     func.openAndParseFile(_uris[index]);
@@ -403,24 +406,31 @@ export class SysParsor implements System
                                 var targetItem = ret.item;
                                 if(targetItem)
                                 {
-                                    if (targetItem.valueItem) {
-                                        //获取赋值对象
-                                        var valItem2 = ps.getAssignmentValueItem( ps , node.init[0] );
-                                        if(valItem2)
-                                        {
-                                            //可变长参数 '...' 为文件名
-                                            if(targetItem.valueItem.astNode.type == 'VarargLiteral')
-                                            {                 
-                                                GlobalAstInfo.globalItems.set(ps.currentDoc.name,valItem2);
-                                            }
-                                            else if(targetItem.valueItem.astNode.type == 'StringLiteral' ||
-                                            targetItem.valueItem.astNode.type == 'NumericLiteral')
-                                            {
-                                                GlobalAstInfo.globalItems.set(targetItem.valueItem.astNode.value,valItem2);
-                                            }
-                                        }
 
+                                    if (targetItem.astNode.init[0].type == 'VarargLiteral' && targetItem.astNode.init[0].value == '...' ) {
+                                        var valItem2 = ps.getAssignmentValueItem( ps , node.init[0] );
+                                        GlobalAstInfo.globalItems.set(ps.currentDoc.name,valItem2);
                                     }
+
+
+                                    // if (targetItem.valueItem) {
+                                    //     //获取赋值对象
+                                    //     var valItem2 = ps.getAssignmentValueItem( ps , node.init[0] );
+                                    //     if(valItem2)
+                                    //     {
+                                    //         //可变长参数 '...' 为文件名
+                                    //         if(targetItem.valueItem.astNode.type == 'VarargLiteral')
+                                    //         {                 
+                                    //             GlobalAstInfo.globalItems.set(ps.currentDoc.name,valItem2);
+                                    //         }
+                                    //         else if(targetItem.valueItem.astNode.type == 'StringLiteral' ||
+                                    //         targetItem.valueItem.astNode.type == 'NumericLiteral')
+                                    //         {
+                                    //             GlobalAstInfo.globalItems.set(targetItem.valueItem.astNode.value,valItem2);
+                                    //         }
+                                    //     }
+
+                                    // }
                                     
                                 }
                             }
