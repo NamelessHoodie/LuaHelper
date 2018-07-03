@@ -635,7 +635,8 @@ function print1(...)
             end
             local sendMsg = {
                 event = LuaDebugger.event.C2S_LuaPrint,
-                data = { msg = ZZBase64.encode(str), type = 1 }
+                --data = { msg = ZZBase64.encode(str), type = 1 }
+                data = { msg = str, type = 1 }
             }
             local sendStr = json.encode(sendMsg)
             debug_server:send(sendStr .. "__debugger_k0204__")

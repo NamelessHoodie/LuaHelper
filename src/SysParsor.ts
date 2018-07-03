@@ -10,7 +10,6 @@ import { ComStatusBar } from "./ComStatusBar"
 import { GlobalAstInfo,DocInfo,LuaSyntaxItem,ScopeAstInfo,DocAstInfo,ELuaSyntaxItemType,Scope} from "./ComAst"
 import { ComFileAstDirectory } from './ComFileAstDirectory'
 import { ComConfig } from "./ComConfig"
-//const luaparse = require('luaparse');
 
 export class SysParsor implements System
 {
@@ -114,12 +113,7 @@ export class SysParsor implements System
                             try{
                                 if( _uri != undefined)
                                 {
-    
-                                    // //用于断点某个指定文档
-                                    // if (_uri.path.search("LuaDebug")!= -1) {
-                                    //     //Bingo
-                                    //     console.log("Bingo");
-                                    // }
+
                                     var timestamp3 = new Date().getTime();
                                     showParsePercentageInStatusBar( "Luahelper Parsing : " , index);
                                     func.self.parseOne(_uri,doc);
@@ -443,51 +437,6 @@ export class SysParsor implements System
                 }
 
                 let tempAssignItem = null;
-                // //如果是Identifier则直接挂到globalItems上去
-                // if( variable.type == 'Identifier')
-                // {
-
-                //     if (ps.currentScopeAst.paramsItems != undefined) {
-                //         //如果已定义则忽略
-                //         if(ps.currentScopeAst.paramsItems.has(variable.name))
-                //         {
-                //             break;
-                //         }
-                //     }
-
-
-                //     //如果是模块则挂到模块表上
-                //     if ( ps.moduleChecker.isModuleFile === true ) {
-
-                //         if (ps.moduleChecker.moduleItem.children.has(variable.name)) {
-                //             break;
-                //         }
-
-                //         tempAssignItem = new LuaSyntaxItem(variable.name,ELuaSyntaxItemType.Value,node,null,this.currentDoc);
-                //         ps.moduleChecker.moduleItem.children.set(variable.name,tempAssignItem);
-                //         break;
-                //     }
-
-
-                //     //否则挂到全局表上
-                //     if (GlobalAstInfo.globalItems.has(variable.name) || ps.currentScopeAst.localItems.has(variable.name))
-                //     {
-                //         break;
-                //     }
-
-                //     tempAssignItem = new LuaSyntaxItem(variable.name,ELuaSyntaxItemType.Value,node,null,this.currentDoc);
-                //     if(!GlobalAstInfo.globalItems.has(variable.name))
-                //     {
-                //         GlobalAstInfo.globalItems.set(variable.name,tempAssignItem);
-                //     }
-
-                    
-                // }else if( variable.type == 'MemberExpression' )
-                // {
-
-                //     //递归判断多层嵌套定义
-                //     tempAssignItem = ps._checkMemberExpressionInModule(ps,variable)
-                // }
 
                 tempAssignItem = ps._getItemFromNode(ps,variable);
 
@@ -546,38 +495,6 @@ export class SysParsor implements System
                     if ( ps.moduleChecker.isModuleFile === true ) {
                         rootItems = ps.moduleChecker.moduleItem.children;
                     }
-
-                    // //非模块的挂接关系链
-                    // if(node.identifier.type == 'Identifier')
-                    // {
-                    //     if(node.isLocal == true)
-                    //     {
-                    //         var item = ps.currentScopeAst.localItems.get(node.identifier.name);
-                    //         if(!item)
-                    //         {
-                    //             item = new LuaSyntaxItem(ELuaSyntaxItemType.Function,node.identifier,null,this.currentDoc);
-                    //             item.functionAstNode = node;
-                    //             ps.currentScopeAst.localItems.set(node.identifier.name,item);
-                    //         }
-                    //     }else
-                    //     {
-                    //         item = GlobalAstInfo.globalItems.get(node.identifier.name);
-                    //         if(!item)
-                    //         {
-                    //             item = new LuaSyntaxItem(ELuaSyntaxItemType.Function,node.identifier,null,this.currentDoc);
-                    //             item.functionAstNode = node;
-                    //             GlobalAstInfo.globalItems.set(node.identifier.name,item);
-                    //         }
-                    //     }
-                    // }else if( node.identifier.type =='MemberExpression')//函数定义式如果是memberexp则递归检测挂接
-                    // {
-                    //     item = ps._checkMemberExpression(ps,node.identifier,null,ELuaSyntaxItemType.Function);
-                    //     if (item) {
-                    //         item.functionAstNode = node; 
-                    //         item.type = ELuaSyntaxItemType.Function;
-                    //     }
-
-                    // }
 
                     if(node.identifier.type == 'Identifier')
                     {
@@ -638,15 +555,6 @@ export class SysParsor implements System
         scope.endOffset = node.range[1];
         
         scope.nodes.push(node);
-        // if (node.type === 'Identifier' && node.name === '__scope_marker__') {
-        //     ps.currentScope = scope;
-        // }
-        // else if (node.type === 'CallExpression' && node.base.type === 'MemberExpression') {
-        //     const { name, container } = ps._getIdentifierName(node.base);
-        //     if (name === '__completion_helper__') {
-        //         //ps.completionTableName = container;
-        //     }
-        // }
 
         ps.lastAstNode = ps.currentAstNode;
     }
@@ -745,29 +653,6 @@ export class SysParsor implements System
             item.children = tempTableItemsMap;
         }
 
-        // //变量类型则寻找已存在变量Item,并返回
-        // if( valueNode.type == 'Identifier')
-        // {
-        //     item = Utils.findDefinedItemInScopeAstInfo(valueNode.name,ps.currentScopeAst);
-        //     item = item.item;
-        //     if ( !item) {
-        //         //没有取到同时该文件是Module则去Module中取
-        //         if(ps.moduleChecker.isModuleFile === true && ps.moduleChecker.moduleItem.children.has(valueNode.name))
-        //         {
-        //             item = ps.moduleChecker.moduleItem.children.get(valueNode.name);
-        //         }
-        //     }
-
-        //     if ( !item) {
-        //         //都没取去全局表中取
-        //         if(GlobalAstInfo.globalItems.has(valueNode.name) )
-        //         {
-        //             item = GlobalAstInfo.globalItems.get(valueNode.name);
-        //         } 
-        //     }
-
-
-        // }
 
         return item;
 

@@ -161,14 +161,14 @@ export class LuaDebugAdapter extends LoggingDebugSession
             da.luaStartProc = da.runtimeLoader.loadRuntime(args);
             
             da.luaStartProc.on('error', error => {
-                da.dalog("error:" + error.message);
+                da.log("error:" + error.message);
             });
             
             da.luaStartProc.stderr.setEncoding('utf8');
             da.luaStartProc.stderr.on('data', error => {
                 if (typeof(error) == 'string' ) {
-                    da.dalog("stderr:-------------------------------------------");
-                    da.dalog( error );
+                    da.log("stderr:-------------------------------------------");
+                    da.log( error );
                 }
             });
 
