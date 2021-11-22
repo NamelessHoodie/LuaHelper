@@ -549,6 +549,1103 @@
 		"body": "debug.upvaluejoin( ${1:f1}, ${2:n1}, ${3:f2}, ${4:n2} )",
 		"description": "debug.upvaluejoin (f1, n1, f2, n2)",
 		"scope": "source.lua"
+	},
+	"VK.NONE": {
+		"prefix": "VK.NONE",
+		"body": "VK.NONE",
+		"description": "VK Enum - This Enum value Means no key.",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.LBUTTON": {
+		"prefix": "VK.LBUTTON",
+		"body": "VK.LBUTTON",
+		"description": "VK Enum - Left mouse button",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.RBUTTON": {
+		"prefix": "VK.RBUTTON",
+		"body": "VK.RBUTTON",
+		"description": "VK Enum - Right mouse button",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.CANCEL": {
+		"prefix": "VK.CANCEL",
+		"body": "VK.CANCEL",
+		"description": "VK Enum - Control-break processing",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.MBUTTON": {
+		"prefix": "VK.MBUTTON",
+		"body": "VK.MBUTTON",
+		"description": "VK Enum - Middle mouse button (three-button mouse)",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.XBUTTON1M": {
+		"prefix": "VK.XBUTTON1M",
+		"body": "VK.XBUTTON1M",
+		"description": "VK Enum - Windows 2000/XP: X1 mouse button",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.XBUTTON2M": {
+		"prefix": "VK.XBUTTON2M",
+		"body": "VK.XBUTTON2M",
+		"description": "VK Enum - Windows 2000/XP: X2 mouse button",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.BACK": {
+		"prefix": "VK.BACK",
+		"body": "VK.BACK",
+		"description": "VK Enum - BACKSPACE key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.TAB": {
+		"prefix": "VK.TAB",
+		"body": "VK.TAB",
+		"description": "VK Enum - TAB key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.CLEAR": {
+		"prefix": "VK.CLEAR",
+		"body": "VK.CLEAR",
+		"description": "VK Enum - CLEAR key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.RETURN": {
+		"prefix": "VK.RETURN",
+		"body": "VK.RETURN",
+		"description": "VK Enum - ENTER key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.SHIFT": {
+		"prefix": "VK.SHIFT",
+		"body": "VK.SHIFT",
+		"description": "VK Enum - SHIFT key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.CONTROL": {
+		"prefix": "VK.CONTROL",
+		"body": "VK.CONTROL",
+		"description": "VK Enum - CTRL key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.MENU": {
+		"prefix": "VK.MENU",
+		"body": "VK.MENU",
+		"description": "VK Enum - ALT key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.PAUSE": {
+		"prefix": "VK.PAUSE",
+		"body": "VK.PAUSE",
+		"description": "VK Enum - PAUSE key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.CAPITAL": {
+		"prefix": "VK.CAPITAL",
+		"body": "VK.CAPITAL",
+		"description": "VK Enum - CAPS LOCK key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KANA": {
+		"prefix": "VK.KANA",
+		"body": "VK.KANA",
+		"description": "VK Enum - Input Method Editor (IME) Kana mode",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.HANGUL": {
+		"prefix": "VK.HANGUL",
+		"body": "VK.HANGUL",
+		"description": "VK Enum - IME Hangul mode",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.JUNJA": {
+		"prefix": "VK.JUNJA",
+		"body": "VK.JUNJA",
+		"description": "VK Enum - IME Junja mode",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.FINAL": {
+		"prefix": "VK.FINAL",
+		"body": "VK.FINAL",
+		"description": "VK Enum - IME final mode",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.HANJA": {
+		"prefix": "VK.HANJA",
+		"body": "VK.HANJA",
+		"description": "VK Enum - IME Hanja mode",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KANJI": {
+		"prefix": "VK.KANJI",
+		"body": "VK.KANJI",
+		"description": "VK Enum - IME Kanji mode",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.ESCAPE": {
+		"prefix": "VK.ESCAPE",
+		"body": "VK.ESCAPE",
+		"description": "VK Enum - ESC key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.CONVERT": {
+		"prefix": "VK.CONVERT",
+		"body": "VK.CONVERT",
+		"description": "VK Enum - IME convert",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.NONCONVERT": {
+		"prefix": "VK.NONCONVERT",
+		"body": "VK.NONCONVERT",
+		"description": "VK Enum - IME nonconvert",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.ACCEPT": {
+		"prefix": "VK.ACCEPT",
+		"body": "VK.ACCEPT",
+		"description": "VK Enum - IME accept",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.MODECHANGE": {
+		"prefix": "VK.MODECHANGE",
+		"body": "VK.MODECHANGE",
+		"description": "VK Enum - IME mode change request",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.SPACE": {
+		"prefix": "VK.SPACE",
+		"body": "VK.SPACE",
+		"description": "VK Enum - SPACEBAR",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.PRIOR": {
+		"prefix": "VK.PRIOR",
+		"body": "VK.PRIOR",
+		"description": "VK Enum - PAGE UP key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.NEXT": {
+		"prefix": "VK.NEXT",
+		"body": "VK.NEXT",
+		"description": "VK Enum - PAGE DOWN key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.END": {
+		"prefix": "VK.END",
+		"body": "VK.END",
+		"description": "VK Enum - END key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.HOME": {
+		"prefix": "VK.HOME",
+		"body": "VK.HOME",
+		"description": "VK Enum - HOME key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.LEFT": {
+		"prefix": "VK.LEFT",
+		"body": "VK.LEFT",
+		"description": "VK Enum - LEFT ARROW key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.UP": {
+		"prefix": "VK.UP",
+		"body": "VK.UP",
+		"description": "VK Enum - UP ARROW key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.RIGHT": {
+		"prefix": "VK.RIGHT",
+		"body": "VK.RIGHT",
+		"description": "VK Enum - RIGHT ARROW key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.DOWN": {
+		"prefix": "VK.DOWN",
+		"body": "VK.DOWN",
+		"description": "VK Enum - DOWN ARROW key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.SELECT": {
+		"prefix": "VK.SELECT",
+		"body": "VK.SELECT",
+		"description": "VK Enum - SELECT key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.PRINT": {
+		"prefix": "VK.PRINT",
+		"body": "VK.PRINT",
+		"description": "VK Enum - PRINT key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.EXECUTE": {
+		"prefix": "VK.EXECUTE",
+		"body": "VK.EXECUTE",
+		"description": "VK Enum - EXECUTE key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.SNAPSHOT": {
+		"prefix": "VK.SNAPSHOT",
+		"body": "VK.SNAPSHOT",
+		"description": "VK Enum - PRINT SCREEN key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.INSERT": {
+		"prefix": "VK.INSERT",
+		"body": "VK.INSERT",
+		"description": "VK Enum - INS key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.DEL": {
+		"prefix": "VK.DEL",
+		"body": "VK.DEL",
+		"description": "VK Enum - DEL key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.HELP": {
+		"prefix": "VK.HELP",
+		"body": "VK.HELP",
+		"description": "VK Enum - HELP key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_0": {
+		"prefix": "VK.KEY_0",
+		"body": "VK.KEY_0",
+		"description": "VK Enum - 0 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_1": {
+		"prefix": "VK.KEY_1",
+		"body": "VK.KEY_1",
+		"description": "VK Enum - 1 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_2": {
+		"prefix": "VK.KEY_2",
+		"body": "VK.KEY_2",
+		"description": "VK Enum - 2 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_3": {
+		"prefix": "VK.KEY_3",
+		"body": "VK.KEY_3",
+		"description": "VK Enum - 3 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_4": {
+		"prefix": "VK.KEY_4",
+		"body": "VK.KEY_4",
+		"description": "VK Enum - 4 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_5": {
+		"prefix": "VK.KEY_5",
+		"body": "VK.KEY_5",
+		"description": "VK Enum - 5 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_6": {
+		"prefix": "VK.KEY_6",
+		"body": "VK.KEY_6",
+		"description": "VK Enum - 6 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_7": {
+		"prefix": "VK.KEY_7",
+		"body": "VK.KEY_7",
+		"description": "VK Enum - 7 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_8": {
+		"prefix": "VK.KEY_8",
+		"body": "VK.KEY_8",
+		"description": "VK Enum - 8 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_9": {
+		"prefix": "VK.KEY_9",
+		"body": "VK.KEY_9",
+		"description": "VK Enum - 9 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_A": {
+		"prefix": "VK.KEY_A",
+		"body": "VK.KEY_A",
+		"description": "VK Enum - A key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_B": {
+		"prefix": "VK.KEY_B",
+		"body": "VK.KEY_B",
+		"description": "VK Enum - B key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_C": {
+		"prefix": "VK.KEY_C",
+		"body": "VK.KEY_C",
+		"description": "VK Enum - C key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_D": {
+		"prefix": "VK.KEY_D",
+		"body": "VK.KEY_D",
+		"description": "VK Enum - D key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_E": {
+		"prefix": "VK.KEY_E",
+		"body": "VK.KEY_E",
+		"description": "VK Enum - E key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_F": {
+		"prefix": "VK.KEY_F",
+		"body": "VK.KEY_F",
+		"description": "VK Enum - F key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_G": {
+		"prefix": "VK.KEY_G",
+		"body": "VK.KEY_G",
+		"description": "VK Enum - G key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_H": {
+		"prefix": "VK.KEY_H",
+		"body": "VK.KEY_H",
+		"description": "VK Enum - H key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_I": {
+		"prefix": "VK.KEY_I",
+		"body": "VK.KEY_I",
+		"description": "VK Enum - I key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_J": {
+		"prefix": "VK.KEY_J",
+		"body": "VK.KEY_J",
+		"description": "VK Enum - J key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_K": {
+		"prefix": "VK.KEY_K",
+		"body": "VK.KEY_K",
+		"description": "VK Enum - K key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_L": {
+		"prefix": "VK.KEY_L",
+		"body": "VK.KEY_L",
+		"description": "VK Enum - L key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_M": {
+		"prefix": "VK.KEY_M",
+		"body": "VK.KEY_M",
+		"description": "VK Enum - M key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_N": {
+		"prefix": "VK.KEY_N",
+		"body": "VK.KEY_N",
+		"description": "VK Enum - N key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_O": {
+		"prefix": "VK.KEY_O",
+		"body": "VK.KEY_O",
+		"description": "VK Enum - O key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_P": {
+		"prefix": "VK.KEY_P",
+		"body": "VK.KEY_P",
+		"description": "VK Enum - P key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_Q": {
+		"prefix": "VK.KEY_Q",
+		"body": "VK.KEY_Q",
+		"description": "VK Enum - Q key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_R": {
+		"prefix": "VK.KEY_R",
+		"body": "VK.KEY_R",
+		"description": "VK Enum - R key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_S": {
+		"prefix": "VK.KEY_S",
+		"body": "VK.KEY_S",
+		"description": "VK Enum - S key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_T": {
+		"prefix": "VK.KEY_T",
+		"body": "VK.KEY_T",
+		"description": "VK Enum - T key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_U": {
+		"prefix": "VK.KEY_U",
+		"body": "VK.KEY_U",
+		"description": "VK Enum - U key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_V": {
+		"prefix": "VK.KEY_V",
+		"body": "VK.KEY_V",
+		"description": "VK Enum - V key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_W": {
+		"prefix": "VK.KEY_W",
+		"body": "VK.KEY_W",
+		"description": "VK Enum - W key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_X": {
+		"prefix": "VK.KEY_X",
+		"body": "VK.KEY_X",
+		"description": "VK Enum - X key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_Y": {
+		"prefix": "VK.KEY_Y",
+		"body": "VK.KEY_Y",
+		"description": "VK Enum - Y key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.KEY_Z": {
+		"prefix": "VK.KEY_Z",
+		"body": "VK.KEY_Z",
+		"description": "VK Enum - Z key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.LWIN": {
+		"prefix": "VK.LWIN",
+		"body": "VK.LWIN",
+		"description": "VK Enum - Left Windows key (Microsoft Natural keyboard)",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.RWIN": {
+		"prefix": "VK.RWIN",
+		"body": "VK.RWIN",
+		"description": "VK Enum - Right Windows key (Natural keyboard)",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.APPS": {
+		"prefix": "VK.APPS",
+		"body": "VK.APPS",
+		"description": "VK Enum - Applications key (Natural keyboard)",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.SLEEP": {
+		"prefix": "VK.SLEEP",
+		"body": "VK.SLEEP",
+		"description": "VK Enum - Computer Sleep key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.NUMPAD0": {
+		"prefix": "VK.NUMPAD0",
+		"body": "VK.NUMPAD0",
+		"description": "VK Enum - Numeric keypad 0 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.NUMPAD1": {
+		"prefix": "VK.NUMPAD1",
+		"body": "VK.NUMPAD1",
+		"description": "VK Enum - Numeric keypad 1 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.NUMPAD2": {
+		"prefix": "VK.NUMPAD2",
+		"body": "VK.NUMPAD2",
+		"description": "VK Enum - Numeric keypad 2 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.NUMPAD3": {
+		"prefix": "VK.NUMPAD3",
+		"body": "VK.NUMPAD3",
+		"description": "VK Enum - Numeric keypad 3 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.NUMPAD4": {
+		"prefix": "VK.NUMPAD4",
+		"body": "VK.NUMPAD4",
+		"description": "VK Enum - Numeric keypad 4 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.NUMPAD5": {
+		"prefix": "VK.NUMPAD5",
+		"body": "VK.NUMPAD5",
+		"description": "VK Enum - Numeric keypad 5 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.NUMPAD6": {
+		"prefix": "VK.NUMPAD6",
+		"body": "VK.NUMPAD6",
+		"description": "VK Enum - Numeric keypad 6 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.NUMPAD7": {
+		"prefix": "VK.NUMPAD7",
+		"body": "VK.NUMPAD7",
+		"description": "VK Enum - Numeric keypad 7 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.NUMPAD8": {
+		"prefix": "VK.NUMPAD8",
+		"body": "VK.NUMPAD8",
+		"description": "VK Enum - Numeric keypad 8 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.NUMPAD9": {
+		"prefix": "VK.NUMPAD9",
+		"body": "VK.NUMPAD9",
+		"description": "VK Enum - Numeric keypad 9 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.MULTIPLY": {
+		"prefix": "VK.MULTIPLY",
+		"body": "VK.MULTIPLY",
+		"description": "VK Enum - Multiply key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.ADD": {
+		"prefix": "VK.ADD",
+		"body": "VK.ADD",
+		"description": "VK Enum - Add key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.SEPARATOR": {
+		"prefix": "VK.SEPARATOR",
+		"body": "VK.SEPARATOR",
+		"description": "VK Enum - Separator key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.SUBTRACT": {
+		"prefix": "VK.SUBTRACT",
+		"body": "VK.SUBTRACT",
+		"description": "VK Enum - Subtract key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.DECIMAL": {
+		"prefix": "VK.DECIMAL",
+		"body": "VK.DECIMAL",
+		"description": "VK Enum - Decimal key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.DIVIDE": {
+		"prefix": "VK.DIVIDE",
+		"body": "VK.DIVIDE",
+		"description": "VK Enum - Divide key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.F1": {
+		"prefix": "VK.F1",
+		"body": "VK.F1",
+		"description": "VK Enum - F1 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.F2": {
+		"prefix": "VK.F2",
+		"body": "VK.F2",
+		"description": "VK Enum - F2 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.F3": {
+		"prefix": "VK.F3",
+		"body": "VK.F3",
+		"description": "VK Enum - F3 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.F4": {
+		"prefix": "VK.F4",
+		"body": "VK.F4",
+		"description": "VK Enum - F4 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.F5": {
+		"prefix": "VK.F5",
+		"body": "VK.F5",
+		"description": "VK Enum - F5 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.F6": {
+		"prefix": "VK.F6",
+		"body": "VK.F6",
+		"description": "VK Enum - F6 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.F7": {
+		"prefix": "VK.F7",
+		"body": "VK.F7",
+		"description": "VK Enum - F7 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.F8": {
+		"prefix": "VK.F8",
+		"body": "VK.F8",
+		"description": "VK Enum - F8 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.F9": {
+		"prefix": "VK.F9",
+		"body": "VK.F9",
+		"description": "VK Enum - F9 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.F10": {
+		"prefix": "VK.F10",
+		"body": "VK.F10",
+		"description": "VK Enum - F10 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.F11": {
+		"prefix": "VK.F11",
+		"body": "VK.F11",
+		"description": "VK Enum - F11 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.F12": {
+		"prefix": "VK.F12",
+		"body": "VK.F12",
+		"description": "VK Enum - F12 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.F13": {
+		"prefix": "VK.F13",
+		"body": "VK.F13",
+		"description": "VK Enum - F13 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.F14": {
+		"prefix": "VK.F14",
+		"body": "VK.F14",
+		"description": "VK Enum - F14 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.F15": {
+		"prefix": "VK.F15",
+		"body": "VK.F15",
+		"description": "VK Enum - F15 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.F16": {
+		"prefix": "VK.F16",
+		"body": "VK.F16",
+		"description": "VK Enum - F16 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.F17": {
+		"prefix": "VK.F17",
+		"body": "VK.F17",
+		"description": "VK Enum - F17 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.F18": {
+		"prefix": "VK.F18",
+		"body": "VK.F18",
+		"description": "VK Enum - F18 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.F19": {
+		"prefix": "VK.F19",
+		"body": "VK.F19",
+		"description": "VK Enum - F19 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.F20": {
+		"prefix": "VK.F20",
+		"body": "VK.F20",
+		"description": "VK Enum - F20 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.F21": {
+		"prefix": "VK.F21",
+		"body": "VK.F21",
+		"description": "VK Enum - F21 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.F22": {
+		"prefix": "VK.F22",
+		"body": "VK.F22",
+		"description": "VK Enum - F22 key, (PPC only) Key used to lock device.",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.F23": {
+		"prefix": "VK.F23",
+		"body": "VK.F23",
+		"description": "VK Enum - F23 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.F24": {
+		"prefix": "VK.F24",
+		"body": "VK.F24",
+		"description": "VK Enum - F24 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.NUMLOCK": {
+		"prefix": "VK.NUMLOCK",
+		"body": "VK.NUMLOCK",
+		"description": "VK Enum - NUM LOCK key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.SCROLL": {
+		"prefix": "VK.SCROLL",
+		"body": "VK.SCROLL",
+		"description": "VK Enum - SCROLL LOCK key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.LSHIFT": {
+		"prefix": "VK.LSHIFT",
+		"body": "VK.LSHIFT",
+		"description": "VK Enum - Left SHIFT key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.RSHIFT": {
+		"prefix": "VK.RSHIFT",
+		"body": "VK.RSHIFT",
+		"description": "VK Enum - Right SHIFT key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.LCONTROL": {
+		"prefix": "VK.LCONTROL",
+		"body": "VK.LCONTROL",
+		"description": "VK Enum - Left CONTROL key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.RCONTROL": {
+		"prefix": "VK.RCONTROL",
+		"body": "VK.RCONTROL",
+		"description": "VK Enum - Right CONTROL key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.LMENU": {
+		"prefix": "VK.LMENU",
+		"body": "VK.LMENU",
+		"description": "VK Enum - Left MENU key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.RMENU": {
+		"prefix": "VK.RMENU",
+		"body": "VK.RMENU",
+		"description": "VK Enum - Right MENU key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.BROWSER_BACK": {
+		"prefix": "VK.BROWSER_BACK",
+		"body": "VK.BROWSER_BACK",
+		"description": "VK Enum - Windows 2000/XP: Browser Back key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.BROWSER_FORWARD": {
+		"prefix": "VK.BROWSER_FORWARD",
+		"body": "VK.BROWSER_FORWARD",
+		"description": "VK Enum - Windows 2000/XP: Browser Forward key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.BROWSER_REFRESH": {
+		"prefix": "VK.BROWSER_REFRESH",
+		"body": "VK.BROWSER_REFRESH",
+		"description": "VK Enum - Windows 2000/XP: Browser Refresh key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.BROWSER_STOP": {
+		"prefix": "VK.BROWSER_STOP",
+		"body": "VK.BROWSER_STOP",
+		"description": "VK Enum - Windows 2000/XP: Browser Stop key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.BROWSER_SEARCH": {
+		"prefix": "VK.BROWSER_SEARCH",
+		"body": "VK.BROWSER_SEARCH",
+		"description": "VK Enum - Windows 2000/XP: Browser Search key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.BROWSER_FAVORITES": {
+		"prefix": "VK.BROWSER_FAVORITES",
+		"body": "VK.BROWSER_FAVORITES",
+		"description": "VK Enum - Windows 2000/XP: Browser Favorites key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.BROWSER_HOME": {
+		"prefix": "VK.BROWSER_HOME",
+		"body": "VK.BROWSER_HOME",
+		"description": "VK Enum - Windows 2000/XP: Browser Start and Home key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.VOLUME_MUTE": {
+		"prefix": "VK.VOLUME_MUTE",
+		"body": "VK.VOLUME_MUTE",
+		"description": "VK Enum - Windows 2000/XP: Volume Mute key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.VOLUME_DOWN": {
+		"prefix": "VK.VOLUME_DOWN",
+		"body": "VK.VOLUME_DOWN",
+		"description": "VK Enum - Windows 2000/XP: Volume Down key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.VOLUME_UP": {
+		"prefix": "VK.VOLUME_UP",
+		"body": "VK.VOLUME_UP",
+		"description": "VK Enum - Windows 2000/XP: Volume Up key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.MEDIA_NEXT_TRACK": {
+		"prefix": "VK.MEDIA_NEXT_TRACK",
+		"body": "VK.MEDIA_NEXT_TRACK",
+		"description": "VK Enum - Windows 2000/XP: Next Track key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.MEDIA_PREV_TRACK": {
+		"prefix": "VK.MEDIA_PREV_TRACK",
+		"body": "VK.MEDIA_PREV_TRACK",
+		"description": "VK Enum - Windows 2000/XP: Previous Track key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.MEDIA_STOP": {
+		"prefix": "VK.MEDIA_STOP",
+		"body": "VK.MEDIA_STOP",
+		"description": "VK Enum - Windows 2000/XP: Stop Media key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.MEDIA_PLAY_PAUSE": {
+		"prefix": "VK.MEDIA_PLAY_PAUSE",
+		"body": "VK.MEDIA_PLAY_PAUSE",
+		"description": "VK Enum - Windows 2000/XP: Play/Pause Media key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.LAUNCH_MAIL": {
+		"prefix": "VK.LAUNCH_MAIL",
+		"body": "VK.LAUNCH_MAIL",
+		"description": "VK Enum - Windows 2000/XP: Start Mail key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.LAUNCH_MEDIA_SELECT": {
+		"prefix": "VK.LAUNCH_MEDIA_SELECT",
+		"body": "VK.LAUNCH_MEDIA_SELECT",
+		"description": "VK Enum - Windows 2000/XP: Select Media key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.LAUNCH_APP1": {
+		"prefix": "VK.LAUNCH_APP1",
+		"body": "VK.LAUNCH_APP1",
+		"description": "VK Enum - Windows 2000/XP: Start Application 1 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.LAUNCH_APP2": {
+		"prefix": "VK.LAUNCH_APP2",
+		"body": "VK.LAUNCH_APP2",
+		"description": "VK Enum - Windows 2000/XP: Start Application 2 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.OEM_1": {
+		"prefix": "VK.OEM_1",
+		"body": "VK.OEM_1",
+		"description": "VK Enum - Used for miscellaneous characters; it can vary by keyboard.",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.OEM_PLUS": {
+		"prefix": "VK.OEM_PLUS",
+		"body": "VK.OEM_PLUS",
+		"description": "VK Enum - Windows 2000/XP: For any country/region, the '+' key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.OEM_COMMA": {
+		"prefix": "VK.OEM_COMMA",
+		"body": "VK.OEM_COMMA",
+		"description": "VK Enum - Windows 2000/XP: For any country/region, the ',' key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.OEM_MINUS": {
+		"prefix": "VK.OEM_MINUS",
+		"body": "VK.OEM_MINUS",
+		"description": "VK Enum - Windows 2000/XP: For any country/region, the '-' key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.OEM_PERIOD": {
+		"prefix": "VK.OEM_PERIOD",
+		"body": "VK.OEM_PERIOD",
+		"description": "VK Enum - Windows 2000/XP: For any country/region, the '.' key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.OEM_2": {
+		"prefix": "VK.OEM_2",
+		"body": "VK.OEM_2",
+		"description": "VK Enum - Used for miscellaneous characters; it can vary by keyboard.",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.OEM_3": {
+		"prefix": "VK.OEM_3",
+		"body": "VK.OEM_3",
+		"description": "VK Enum - Used for miscellaneous characters; it can vary by keyboard.",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.OEM_4": {
+		"prefix": "VK.OEM_4",
+		"body": "VK.OEM_4",
+		"description": "VK Enum - Used for miscellaneous characters; it can vary by keyboard.",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.OEM_5": {
+		"prefix": "VK.OEM_5",
+		"body": "VK.OEM_5",
+		"description": "VK Enum - Used for miscellaneous characters; it can vary by keyboard.",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.OEM_6": {
+		"prefix": "VK.OEM_6",
+		"body": "VK.OEM_6",
+		"description": "VK Enum - Used for miscellaneous characters; it can vary by keyboard.",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.OEM_7": {
+		"prefix": "VK.OEM_7",
+		"body": "VK.OEM_7",
+		"description": "VK Enum - Used for miscellaneous characters; it can vary by keyboard.",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.OEM_8": {
+		"prefix": "VK.OEM_8",
+		"body": "VK.OEM_8",
+		"description": "VK Enum - Used for miscellaneous characters; it can vary by keyboard.",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.OEM_102": {
+		"prefix": "VK.OEM_102",
+		"body": "VK.OEM_102",
+		"description": "VK Enum - Windows 2000/XP: Either the angle bracket key or the backslash key on the RT 102-key keyboard",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.PROCESSKEY": {
+		"prefix": "VK.PROCESSKEY",
+		"body": "VK.PROCESSKEY",
+		"description": "VK Enum - Windows 95/98/Me, Windows NT 4.0, Windows 2000/XP: IME PROCESS key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.PACKET": {
+		"prefix": "VK.PACKET",
+		"body": "VK.PACKET",
+		"description": "VK Enum - Windows 2000/XP: Used to pass Unicode characters as if they were keystrokes. The VK_PACKET key is the low word of a 32-bit Virtual Key value used for non-keyboard input methods. For more information, see Remark in KEYBDINPUT, SendInput, WM_KEYDOWN, and WM_KEYUP",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.ATTN": {
+		"prefix": "VK.ATTN",
+		"body": "VK.ATTN",
+		"description": "VK Enum - Attn key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.CRSEL": {
+		"prefix": "VK.CRSEL",
+		"body": "VK.CRSEL",
+		"description": "VK Enum - CrSel key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.EXSEL": {
+		"prefix": "VK.EXSEL",
+		"body": "VK.EXSEL",
+		"description": "VK Enum - ExSel key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.EREOF": {
+		"prefix": "VK.EREOF",
+		"body": "VK.EREOF",
+		"description": "VK Enum - Erase EOF key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.PLAY": {
+		"prefix": "VK.PLAY",
+		"body": "VK.PLAY",
+		"description": "VK Enum - Play key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.ZOOM": {
+		"prefix": "VK.ZOOM",
+		"body": "VK.ZOOM",
+		"description": "VK Enum - Zoom key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.NONAME": {
+		"prefix": "VK.NONAME",
+		"body": "VK.NONAME",
+		"description": "VK Enum - Reserved",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.PA1": {
+		"prefix": "VK.PA1",
+		"body": "VK.PA1",
+		"description": "VK Enum - PA1 key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"VK.OEM_CLEAR": {
+		"prefix": "VK.OEM_CLEAR",
+		"body": "VK.OEM_CLEAR",
+		"description": "VK Enum - Clear key",
+		"scope": "hoodiescript-keys.lua"
+	},
+	"WorldChrMan.getCurrentMapEnemies": {
+		"prefix": "WorldChrMan.getCurrentMapEnemies",
+		"body": "WorldChrMan.getCurrentMapEnemies()",
+		"description": "WorldChrMan.getCurrentMapEnemies ()",
+		"scope": "hoodiescript.lua"
+	},
+	"WorldChrMan.reloadCharacterFiles": {
+		"prefix": "WorldChrMan.reloadCharacterFiles",
+		"body": "WorldChrMan.reloadCharacterFiles(${1:characterId})",
+		"description": "WorldChrMan.reloadCharacterFiles (characterId)",
+		"scope": "hoodiescript.lua"
+	},
+	"WorldChrMan.findEntityTest": {
+		"prefix": "WorldChrMan.findEntityTest",
+		"body": "WorldChrMan.findEntityTest(${1:id})",
+		"description": "WorldChrMan.findEntityTest (id)",
+		"scope": "hoodiescript.lua"
+	},
+	"WorldChrMan.getInsByHandle": {
+		"prefix": "WorldChrMan.getInsByHandle",
+		"body": "WorldChrMan.getInsByHandle(${1:handle})",
+		"description": "WorldChrMan.getInsByHandle (handle)",
+		"scope": "hoodiescript.lua"
+	},
+	"WorldChrMan.getCamVector": {
+		"prefix": "WorldChrMan.getCamVector",
+		"body": "WorldChrMan.getCamVector()",
+		"description": "WorldChrMan.getCamVector ()",
+		"scope": "hoodiescript.lua"
+	},
+	"WorldChrMan.getInstance": {
+		"prefix": "WorldChrMan.getInstance",
+		"body": "WorldChrMan.getInstance()",
+		"description": "WorldChrMan.getInstance ()",
+		"scope": "hoodiescript.lua"
+	},
+	"WorldChrMan.hasInstance": {
+		"prefix": "WorldChrMan.hasInstance",
+		"body": "WorldChrMan.hasInstance()",
+		"description": "WorldChrMan.hasInstance ()",
+		"scope": "hoodiescript.lua"
+	},
+	"PlayerIns.new": {
+		"prefix": "PlayerIns.new",
+		"body": "PlayerIns.new(${1:PlayerInsPtr})",
+		"description": "PlayerIns.new(PlayerInsPtr)",
+		"scope": "hoodiescript.lua"
+	},
+	"PlayerIns.getPlayerGameData": {
+		"prefix": "PlayerIns.getPlayerGameData",
+		"body": "PlayerIns.getPlayerGameData(${1:playerIns})",
+		"description": "uintptr_t getPlayerGameData.new(playerIns)",
+		"scope": "hoodiescript.lua"
+	},
+ 	"GiveMeTits": {
+		"prefix": "Tits",
+		"body": "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠛⠛⠋⠉⠙⠻⠿⠿⠿⠿⢿⣿⣿⣿⣿⣿⣿\n⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠃⠄⠄⠄⠄⠄⠄⠄⠄⠹⣿⣿⣶⣶⣦⣬⢹⣿⣿\n⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠃⠄⠄⠄⣰⣧⡀⠄⠄⠄⠄⠈⢙⡋⣿⣿⣿⢸⣿⣿\n⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠄⠄⠰⠼⢯⣿⣿⣦⣄⠄⠄⠄⠈⢡⣿⣿⣿⢸⣿⣿\n⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠄⠄⠸⠤⠕⠛⠙⠷⣿⡆⠄⠄⠄⣸⣿⣿⡏⣼⣿⣿\n⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⣴⣿⣿⣿⢡⣿⣿⣿\n⣿⣿⣿⣿⣿⣿⣿⣿⡟⠄⠄⠄⠄⠄⣄⠄⢀⠄⠄⢀⣤⣾⣿⣿⣿⢃⣾⣿⣿⣿\n⣿⣿⣿⣿⣿⣿⠿⣛⣡⣄⣀⠄⠠⢴⣿⣿⡿⣄⣴⣿⣿⣿⣿⣿⢃⣾⣿⣿⣿⣿\n⣿⣿⣿⣿⣿⡏⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣩⡽⡁⢸⣿⣿⣿⣿⣿\n⣿⣿⣿⣿⣿⢃⣿⣿⢟⣿⣿⣿⣿⣿⣮⢫⣿⣿⣿⣿⣿⣟⢿⠃⠄⢻⣿⣿⣿⣿\n⣿⣿⣿⣿⡿⣸⠟⣵⣿⣿⣿⣿⣿⣿⣿⣾⣿⣿⣿⣿⣿⣿⣷⣄⢰⡄⢿⣿⣿⣿\n⣿⣿⣿⣿⡇⠏⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⠹⡎⣿⣿⣿\n⣭⣍⠛⠿⠄⢰⠋⡉⠹⣿⣿⣿⣿⣿⣿⠙⣿⣿⣿⣿⣿⣿⡟⢁⠙⡆⢡⣿⣿⣿\n⠻⣿⡆⠄⣤⠈⢣⣈⣠⣿⣿⣿⣿⣿⠏⣄⠻⣿⣿⣿⣿⣿⣆⣈⣴⠃⣿⣿⣿⣿\n⡀⠈⢿⠄⣿⡇⠄⠙⠿⣿⡿⠿⢋⣥⣾⣿⣷⣌⠻⢿⣿⣿⡿⠟⣡⣾⣿⣿⠿⢋\n⠛⠳⠄⢠⣿⠇⠄⣷⡑⢶⣶⢿⣿⣿⣿⣽⣿⣿⣿⣶⣶⡐⣶⣿⠿⠛⣩⡄⠄⢸",
+		"description": "ChainFailure is responsible for this",
+		"scope": "tits.tits"
 	}
-	
 }

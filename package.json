@@ -1,9 +1,9 @@
 {
-    "name": "luahelper",
-    "displayName": "luahelper",
-    "description": "luahelper",
+    "name": "hoodiescript-luahelper",
+    "displayName": "hoodiescript-luahelper",
+    "description": "hoodiescript-luahelper",
     "version": "0.0.6",
-    "publisher": "zasidelpf",
+    "publisher": "namelesshoodie",
 	"bugs": {
         "url": "https://gitee.com/debugconsole/luahelper/issues",
 		"email": "120933965@qq.com"
